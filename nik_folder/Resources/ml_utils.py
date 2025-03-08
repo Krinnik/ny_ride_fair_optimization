@@ -66,3 +66,31 @@ def impute_negatives(ny_taxi_2024_df):
     ny_taxi_2024_df.loc[mask, negatives] = ny_taxi_2024_df.loc[mask, negatives].abs()
     ny_taxi_2024_df.loc[mask_2, ['congestion_surcharge']] = 0
     return ny_taxi_2024_df
+
+
+def trip_distance_weird_maxes(ny_taxi_2024_df):
+    long = (ny_taxi_2024_df['trip_distance'] > 50)
+    cost = (ny_taxi_2024_df['total_amount'] < 100)
+    params = long & cost
+    ny_taxi_2024_df.loc[params, ['trip_distance']] = (ny_taxi_2024_df.loc[params, ['fare_amount']] / 5.2)
+    ny_taxi_2024_df.loc[params, ['trip_distance']] = (ny_taxi_2024_df.loc[params, ['trip_distance']] * 1.05)
+    return ny_taxi_2024_df
+
+def drop_unknowns(ny_taxi_2024_df):
+    drop_rows = (ny_taxi_2024_df['PULocationID'] == 265) | (ny_taxi_2024_df['DOLocationID'] == 265) | (
+        ny_taxi_2024_df['PULocationID'] == 264) | (ny_taxi_2024_df['DOLocationID'] == 264
+    ) | (ny_taxi_2024_df['payment_type'] == 3) | (ny_taxi_2024_df['payment_type'] == 5) | (
+        ny_taxi_2024_df['payment_type'] == 6 | (ny_taxi_2024_df['fare_amount'] > ny_taxi_2024_df['total_amount'])
+    )
+    return ny_taxi_2024_df.drop(ny_taxi_2024_df[drop_rows].index, inplace=True)
+
+
+def impute_store_and_fwd_flag(ny_taxi_2024_df):
+    no_mask = (ny_taxi_2024_df['store_and_fwd_flag'] == 'N')
+    yes_mask = (ny_taxi_2024_df['store_and_fwd_flag'] == 'Y')
+
+    ny_taxi_2024_df.loc[no_mask, ['store_and_fwd_flag']] = 0
+    ny_taxi_2024_df.loc[yes_mask, ['store_and_fwd_flag']] = 1
+
+    return ny_taxi_2024_df
+
