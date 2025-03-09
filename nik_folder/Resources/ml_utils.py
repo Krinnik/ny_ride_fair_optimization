@@ -30,8 +30,7 @@ def impute_outliers_airport_fee(ny_taxi_2024_df):
     
     pu_mask = (
         ny_taxi_2024_df['PULocationID'] != 132) | (
-        ny_taxi_2024_df['PULocationID'] != 138) | (
-            ny_taxi_2024_df['DOLocationID'] != 132) | (ny_taxi_2024_df['DOLocationID'] != 138)
+        ny_taxi_2024_df['PULocationID'] != 138)
     fee_mask = np.isnan(
         ny_taxi_2024_df['Airport_fee']) | (
         ny_taxi_2024_df['Airport_fee'] == 1.25) | (
@@ -68,7 +67,7 @@ def impute_negatives(ny_taxi_2024_df):
     return ny_taxi_2024_df
 
 
-def trip_distance_weird_maxes(ny_taxi_2024_df):
+#def trip_distance_weird_maxes(ny_taxi_2024_df):
     long = (ny_taxi_2024_df['trip_distance'] > 50)
     cost = (ny_taxi_2024_df['total_amount'] < 100)
     params = long & cost
@@ -94,3 +93,23 @@ def impute_store_and_fwd_flag(ny_taxi_2024_df):
 
     return ny_taxi_2024_df
 
+
+def fix_total_amount(ny_taxi_2024_df):
+    fix_1 = (ny_taxi_2024_df['fare_amount'] > ny_taxi_2024_df['total_amount'])
+    fix_2 = (ny_taxi_2024_df['fare_amount'] < ny_taxi_2024_df['total_amount'])
+    columns_to_sum = [
+        'fare_amount',
+        'extra',
+        'mta_tax',
+        'tip_amount',
+        'tolls_amount',
+        'improvement_surcharge',
+        'congestion_surcharge',
+        'Airport_fee'
+    ]
+    sum_of_columns = ny_taxi_2024_df[columns_to_sum].sum(axis=1)
+
+    fix_amount = fix_1 & fix_2
+    
+    ny_taxi_2024_df.loc[fix_amount, ['total_amount']] = sum_of_columns[fix_amount]
+    return ny_taxi_2024_df
