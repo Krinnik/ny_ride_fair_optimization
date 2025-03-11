@@ -1,98 +1,55 @@
 import pandas as pd
 import numpy as np
-import geopandas as gp
+import geopandas as gpd
 from geopy.geocoders import Nominatim
-
+from shapely.geometry import Point
+from shapely import wkb
+from shapely import errors
+import itertools
+import matplotlib.pyplot as plt
+import datetime as dt
+import holidays
 
 # Imputation Functions
 
-def impute_passenger_count(ny_taxi_2024_df):
-    ny_taxi_2024_df['passenger_count'] = ny_taxi_2024_df['passenger_count'].fillna(1)
-    pass_mask = (ny_taxi_2024_df['passenger_count'] == 0)
-
-    ny_taxi_2024_df.loc[pass_mask, 'passenger_count'] = 1
-
-    return ny_taxi_2024_df
-
-
+def impute_negatives(ny_taxi_2024_df):
+    ny_taxi_2024_df = ny_taxi_2024_df.dropna()
+    negatives = ['fare_amount', 'extra', 'tip_amount', 'tolls_amount', 'mta_tax', 'improvement_surcharge', 'total_amount', 'congestion_surcharge', 'Airport_fee']
+    mask = (ny_taxi_2024_df[negatives] < 0).any(axis=1)
+    
+    return ny_taxi_2024_df.drop(ny_taxi_2024_df[mask].index, inplace=True)
 
 def impute_airport_fee(ny_taxi_2024_df):
     
     pu_mask = (ny_taxi_2024_df['PULocationID'] == 132) | (ny_taxi_2024_df['PULocationID'] == 138)
-    fee_mask = np.isnan(ny_taxi_2024_df['Airport_fee']) | (ny_taxi_2024_df['Airport_fee'] == 1.25) | (ny_taxi_2024_df['Airport_fee'] == -1.75)
+    fee_mask = (ny_taxi_2024_df['Airport_fee'] == 1.25) | (ny_taxi_2024_df['Airport_fee'] == 0)
     mask = pu_mask & fee_mask
     ny_taxi_2024_df.loc[mask, 'Airport_fee'] = 1.75
     return ny_taxi_2024_df
-
-
 
 def impute_outliers_airport_fee(ny_taxi_2024_df):
     
     pu_mask = (
         ny_taxi_2024_df['PULocationID'] != 132) | (
         ny_taxi_2024_df['PULocationID'] != 138)
-    fee_mask = np.isnan(
-        ny_taxi_2024_df['Airport_fee']) | (
-        ny_taxi_2024_df['Airport_fee'] == 1.25) | (
-            ny_taxi_2024_df['Airport_fee'] == -1.75)
+    fee_mask = (
+        ny_taxi_2024_df['Airport_fee'] == 1.25) | (ny_taxi_2024_df['Airport_fee'] == 1.75)
     mask = pu_mask & fee_mask
     ny_taxi_2024_df.loc[mask, 'Airport_fee'] = 0
     return ny_taxi_2024_df
 
-def impute_na_ratecodeID(ny_taxi_2024_df):
-    def_mask = (ny_taxi_2024_df['PULocationID'] != ny_taxi_2024_df['PULocationID'].isin([np.isnan, 1, 132, 250, 265])) | (
-        ny_taxi_2024_df['DOLocationID'] != ny_taxi_2024_df['DOLocationID'].isin([np.isnan, 1, 132, 250, 265])
-    )
-    rate_mask = (ny_taxi_2024_df['RatecodeID'] > 6) | np.isnan(ny_taxi_2024_df['RatecodeID'])
-    mask = def_mask & rate_mask
-    ny_taxi_2024_df.loc[mask, ['RatecodeID']] = 1
-
-
-def impute_ratecodeIDs(ny_taxi_2024_df):
-    mask = (ny_taxi_2024_df['PULocationID'] == 1) | (ny_taxi_2024_df['DOLocationID'] == 1)
-    mask_2 = (ny_taxi_2024_df['PULocationID'] == 132) | (ny_taxi_2024_df['DOLocationID'] == 132)
-    mask_3 = (ny_taxi_2024_df['PULocationID'] == 250) | (ny_taxi_2024_df['DOLocationID'] == 250) | (
-        ny_taxi_2024_df['PULocationID'] == 265) | (ny_taxi_2024_df['DOLocationID'] == 265)
-    ny_taxi_2024_df.loc[mask, ['RatecodeID']] = 3
-    ny_taxi_2024_df.loc[mask_2, ['RatecodeID']] = 2
-    ny_taxi_2024_df.loc[mask_3, ['RatecodeID']] = 4
-    return ny_taxi_2024_df
-
-def impute_negatives(ny_taxi_2024_df):
-    negatives = ['fare_amount', 'extra', 'tip_amount', 'tolls_amount', 'mta_tax', 'improvement_surcharge', 'total_amount', 'congestion_surcharge']
-    mask = (ny_taxi_2024_df[negatives] < 0).any(axis=1)
-    mask_2 = (np.isnan(ny_taxi_2024_df['congestion_surcharge']))
-    ny_taxi_2024_df.loc[mask, negatives] = ny_taxi_2024_df.loc[mask, negatives].abs()
-    ny_taxi_2024_df.loc[mask_2, ['congestion_surcharge']] = 0
-    return ny_taxi_2024_df
-
-
-#def trip_distance_weird_maxes(ny_taxi_2024_df):
-    long = (ny_taxi_2024_df['trip_distance'] > 50)
-    cost = (ny_taxi_2024_df['total_amount'] < 100)
-    params = long & cost
-    ny_taxi_2024_df.loc[params, ['trip_distance']] = (ny_taxi_2024_df.loc[params, ['fare_amount']] / 5.2)
-    ny_taxi_2024_df.loc[params, ['trip_distance']] = (ny_taxi_2024_df.loc[params, ['trip_distance']] * 1.05)
-    return ny_taxi_2024_df
+def trip_distance_weird_maxes(ny_taxi_2024_df):
+    long = (ny_taxi_2024_df['trip_distance'] > 75)
+    
+    return ny_taxi_2024_df.drop(ny_taxi_2024_df[long].index, inplace=True)
 
 def drop_unknowns(ny_taxi_2024_df):
     drop_rows = (ny_taxi_2024_df['PULocationID'] == 265) | (ny_taxi_2024_df['DOLocationID'] == 265) | (
         ny_taxi_2024_df['PULocationID'] == 264) | (ny_taxi_2024_df['DOLocationID'] == 264
     ) | (ny_taxi_2024_df['payment_type'] == 3) | (ny_taxi_2024_df['payment_type'] == 5) | (
-        ny_taxi_2024_df['payment_type'] == 6 | (ny_taxi_2024_df['fare_amount'] > ny_taxi_2024_df['total_amount'])
+        ny_taxi_2024_df['payment_type'] == 6 
     )
     return ny_taxi_2024_df.drop(ny_taxi_2024_df[drop_rows].index, inplace=True)
-
-
-def impute_store_and_fwd_flag(ny_taxi_2024_df):
-    no_mask = (ny_taxi_2024_df['store_and_fwd_flag'] == 'N')
-    yes_mask = (ny_taxi_2024_df['store_and_fwd_flag'] == 'Y')
-
-    ny_taxi_2024_df.loc[no_mask, ['store_and_fwd_flag']] = 0
-    ny_taxi_2024_df.loc[yes_mask, ['store_and_fwd_flag']] = 1
-
-    return ny_taxi_2024_df
-
 
 def fix_total_amount(ny_taxi_2024_df):
     fix_1 = (ny_taxi_2024_df['fare_amount'] > ny_taxi_2024_df['total_amount'])
@@ -113,3 +70,128 @@ def fix_total_amount(ny_taxi_2024_df):
     
     ny_taxi_2024_df.loc[fix_amount, ['total_amount']] = sum_of_columns[fix_amount]
     return ny_taxi_2024_df
+
+
+def clean_taxi_data(ny_taxi_2024_df):
+    ny_taxi_2024_df['service'] = 0
+    ny_taxi_2024_df = ny_taxi_2024_df[['service',
+                                       'tpep_pickup_datetime',
+                                       'tpep_dropoff_datetime',
+                                       'PULocationID',
+                                       'DOLocationID',
+                                       'trip_distance',
+                                       'fare_amount',
+                                       'tolls_amount',
+                                       'congestion_surcharge',
+                                       'Airport_fee',
+                                       'total_amount']]
+    return ny_taxi_2024_df
+
+
+
+def clean_fhv_df(fhv_2024_df):
+    fhv_2024_df = fhv_2024_df[['hvfhs_license_num', 'pickup_datetime',
+       'dropoff_datetime', 'PULocationID', 'DOLocationID', 'trip_miles', 'base_passenger_fare', 'tolls',
+       'congestion_surcharge', 'airport_fee']]
+    
+    fhv_2024_df.columns = ['service', 'tpep_pickup_datetime', 'tpep_dropoff_datetime', 'PULocationID', 'DOLocationID', 'trip_distance', 'fare_amount', 'tolls_amount',
+       'congestion_surcharge', 'Airport_fee']
+    
+    fhv_2024_df['trip_distance'] = round(fhv_2024_df['trip_distance'], 2)
+    
+    return fhv_2024_df
+
+def impute_service(fhv_2024_df):
+    uber = fhv_2024_df['service'] == 'HV0003'
+    lift = fhv_2024_df['service'] == 'HV0005'
+
+
+    fhv_2024_df.loc[uber, 'service'] = 1
+    fhv_2024_df.loc[lift, 'service'] = 2
+
+    return fhv_2024_df
+
+def resample_uber(fhv_2024_df):
+    uber = fhv_2024_df['service'] == 1
+    uber_rows = fhv_2024_df[uber]
+    lift = fhv_2024_df['service'] == 2
+    lift_rows = fhv_2024_df[lift]
+    ubers = uber_rows.sample(frac=0.33, random_state=29)
+
+    fhv_2024_df = pd.concat([ubers, lift_rows])
+
+    return fhv_2024_df
+
+def impute_negatives_fhv(fhv_2024_df):
+    fhv_2024_df = resample_uber(fhv_2024_df)
+    columns = ['fare_amount', 'tolls_amount', 'congestion_surcharge', 'Airport_fee']
+    neg = (fhv_2024_df[columns] < 0).any(axis=1)
+    
+    return fhv_2024_df.drop(fhv_2024_df[neg].index, inplace=True)
+
+
+def calc_total(fhv_2024_df):
+    calc = (fhv_2024_df.index)
+    fhv_2024_df['total_amount'] = 0
+    columns_to_sum = [
+        'fare_amount', 'tolls_amount', 'congestion_surcharge', 'Airport_fee'
+    ]
+
+    sum_of_columns = fhv_2024_df[columns_to_sum].sum(axis=1)
+
+    fhv_2024_df.loc[calc, 'total_amount'] = sum_of_columns[calc]
+    return fhv_2024_df
+
+
+def merge_data(ny_taxi_2024_df, fhv_2024_df):
+    fhv_2024_df = fhv_2024_df.reset_index()
+    fhv_2024_df = fhv_2024_df.drop('index', axis=1)
+    merged_2024_df = pd.concat([ny_taxi_2024_df, fhv_2024_df])
+
+    merged_2024_df = merged_2024_df[merged_2024_df['tpep_pickup_datetime'].dt.year == 2024]
+    merged_2024_df = merged_2024_df[merged_2024_df['tpep_dropoff_datetime'].dt.year == 2024]
+
+    merged_2024_df = merged_2024_df.sort_values('tpep_pickup_datetime', ascending=True)
+
+    return merged_2024_df
+
+
+def drop_unknowns_fhv(merged_2024_df):
+    drop_rows = (merged_2024_df['PULocationID'] == 265) | (merged_2024_df['DOLocationID'] == 265) | (
+        merged_2024_df['PULocationID'] == 264) | (merged_2024_df['DOLocationID'] == 264)
+    
+    return merged_2024_df.drop(merged_2024_df[drop_rows].index, inplace=True)
+
+def drop_high_fare(merged_2024_df):
+    high = merged_2024_df['fare_amount'] > 500
+
+    return merged_2024_df.drop(merged_2024_df[high].index, inplace=True)
+
+def get_times(merged_2024_df):
+    merged_2024_df['ride_length'] = (merged_2024_df['tpep_dropoff_datetime'] - merged_2024_df['tpep_pickup_datetime']).dt.total_seconds()
+    merged_2024_df['second_of_day'] = (merged_2024_df['tpep_pickup_datetime'].dt.hour * 3600 + merged_2024_df['tpep_pickup_datetime'].dt.minute * 60 + merged_2024_df['tpep_pickup_datetime'].dt.second)
+    merged_2024_df['day_of_year'] = merged_2024_df['tpep_pickup_datetime'].dt.day_of_year
+    merged_2024_df['is_weekend'] = merged_2024_df['tpep_pickup_datetime'].dt.weekday >= 5
+    us_holidays = holidays.US()
+    merged_2024_df['is_holiday'] = merged_2024_df['tpep_pickup_datetime'].apply(lambda x: 1 if x.date() in us_holidays else 0)
+    merged_2024_df = merged_2024_df.drop(['tpep_pickup_datetime', 'tpep_dropoff_datetime'], axis=1)
+    return merged_2024_df
+
+def impute_all(ny_taxi_2024_df, fhv_2024_df):
+    ny_taxi_2024_df = impute_negatives(ny_taxi_2024_df)
+    ny_taxi_2024_df = impute_airport_fee(ny_taxi_2024_df)
+    ny_taxi_2024_df = impute_outliers_airport_fee(ny_taxi_2024_df)
+    ny_taxi_2024_df = drop_unknowns(ny_taxi_2024_df)
+    ny_taxi_2024_df = fix_total_amount(ny_taxi_2024_df)
+    ny_taxi_2024_df = clean_taxi_data(ny_taxi_2024_df)
+    fhv_2024_df = clean_fhv_df(fhv_2024_df)
+    fhv_2024_df = impute_service(fhv_2024_df)
+    fhv_2024_df = resample_uber(fhv_2024_df)
+    fhv_2024_df = impute_negatives_fhv(fhv_2024_df)
+    fhv_2024_df = calc_total(fhv_2024_df)
+    merged_2024_df = merge_data(ny_taxi_2024_df, fhv_2024_df)
+    merged_2024_df = drop_unknowns_fhv(merged_2024_df)
+    merged_2024_df = drop_high_fare(merged_2024_df)
+    merged_2024_df = get_times(merged_2024_df)
+
+    return merged_2024_df
