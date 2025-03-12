@@ -87,6 +87,7 @@ def clean_taxi_data(ny_taxi_2024_df):
                                        'congestion_surcharge',
                                        'Airport_fee',
                                        'total_amount']]
+    ny_taxi_2024_df = ny_taxi_2024_df.sample(frac=0.08, random_state=29)
     return ny_taxi_2024_df
 
 
@@ -125,7 +126,7 @@ def resample_uber(fhv_2024_df):
     return fhv_2024_df
 
 def impute_negatives_fhv(fhv_2024_df):
-    fhv_2024_df = resample_uber(fhv_2024_df)
+    
     columns = ['fare_amount', 'tolls_amount', 'congestion_surcharge', 'Airport_fee']
     neg = (fhv_2024_df[columns] < 0).any(axis=1)
     fhv_2024_df = fhv_2024_df.drop(fhv_2024_df[neg].index)
@@ -184,7 +185,7 @@ def get_times(merged_2024_df):
     return merged_2024_df
 
 def impute_geo_data(merged_2024_df, zone_long_lat_data):
-    merged_2024_df = get_times(merged_2024_df)
+    
     def safe_wkb_loads(wkb_byte):
         try:
             return wkb.loads(wkb_byte)
