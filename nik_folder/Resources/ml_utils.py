@@ -238,9 +238,10 @@ def impute_geo_data(merged_2024_df, zone_long_lat_data):
        'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
        'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
     
-    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fore', 'tolls', 'airport', 'congestion', 'total', 'class', 'PU_Bronx', 'PU_Brooklyn',
+    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fore', 'tolls', 'airport', 'congestion', 'total', 'service', 'PU_Bronx', 'PU_Brooklyn',
        'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
        'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
+    merged_2024_df = merged_2024_df.dropna()
     return merged_2024_df
 
 
