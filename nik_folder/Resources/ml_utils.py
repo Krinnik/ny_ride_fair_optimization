@@ -9,6 +9,7 @@ import itertools
 import matplotlib.pyplot as plt
 import datetime as dt
 import holidays
+import math
 
 # Imputation Functions
 
@@ -181,6 +182,7 @@ def get_times(merged_2024_df):
     merged_2024_df['is_weekend'] = merged_2024_df['tpep_pickup_datetime'].dt.weekday >= 5
     us_holidays = holidays.US()
     merged_2024_df['is_holiday'] = merged_2024_df['tpep_pickup_datetime'].apply(lambda x: 1 if x.date() in us_holidays else 0)
+    merged_2024_df['hour'] = merged_2024_df['hour'] = merged_2024_df['second_of_day'].apply(lambda x: math.floor(x / 60 / 60))
 
     return merged_2024_df
 
@@ -233,19 +235,38 @@ def impute_geo_data(merged_2024_df, zone_long_lat_data):
                            (merged_2024_df["tpep_pickup_datetime"].dt.hour.between(7, 9))).astype(int)
     merged_2024_df["evening_rush_hour"] = ((merged_2024_df["tpep_pickup_datetime"].dt.weekday < 5) & 
                             (merged_2024_df["tpep_pickup_datetime"].dt.hour.between(16, 18))).astype(int)
+    return merged_2024_df
     
-    merged_2024_df = merged_2024_df[['second_of_day', 'day_of_year', 'is_weekend', 'is_holiday', 'morning_rush_hour', 'evening_rush_hour', 'PUx', 'PUy', 'DOx', 'DOy', 'trip_distance', 'ride_length', 'fare_amount', 'tolls_amount', 'Airport_fee', 'congestion_surcharge', 'total_amount', 'service', 'PU_Bronx', 'PU_Brooklyn',
+def impute_weather(merged_2024_df, weather_df):
+    merged_2024_df = merged_2024_df.dropna()
+    weather_df['time'] = pd.to_datetime(weather_df['time'])
+    weather_df = weather_df.rename(columns={'time': 'tpep_pickup_datetime'})
+    weather_df['hour'] = (weather_df['tpep_pickup_datetime']).dt.hour.astype('int')
+    weather_df['day_of_year'] = (weather_df['tpep_pickup_datetime']).dt.day_of_year.astype('int')
+
+    weather_df_clean = weather_df[['day_of_year', 'hour', 'prcp', 'temp(f)']]
+
+    
+    merged_2024_df = pd.merge(merged_2024_df, weather_df_clean[['day_of_year', 'hour', 'prcp', 'temp(f)']], on=['day_of_year', 'hour'], how='left')
+
+    merged_2024_df = merged_2024_df.drop('hour', axis=1)
+
+    return merged_2024_df
+
+
+def clean_merged(merged_2024_df):
+    merged_2024_df = merged_2024_df[['second_of_day', 'day_of_year', 'is_weekend', 'is_holiday', 'morning_rush_hour', 'evening_rush_hour', 'prcp', 'temp(f)', 'PUx', 'PUy', 'DOx', 'DOy', 'trip_distance', 'ride_length', 'fare_amount', 'tolls_amount', 'Airport_fee', 'congestion_surcharge', 'total_amount', 'service', 'PU_Bronx', 'PU_Brooklyn',
        'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
        'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
     
-    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'morning_rush', 'evening rush', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fare', 'tolls', 'airport', 'congestion', 'total', 'class', 'PU_Bronx', 'PU_Brooklyn',
+    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'morning_rush', 'evening rush', 'prcp', 'temp', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fare', 'tolls', 'airport', 'congestion', 'total', 'class', 'PU_Bronx', 'PU_Brooklyn',
        'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
        'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
     merged_2024_df = merged_2024_df.dropna()
     return merged_2024_df
 
 
-def impute_all(ny_taxi_2024_df, fhv_2024_df, zone_long_lat_data):
+def impute_all(ny_taxi_2024_df, fhv_2024_df, zone_long_lat_data, weather_df):
     ny_taxi_2024_df = impute_negatives(ny_taxi_2024_df)
     ny_taxi_2024_df = impute_airport_fee(ny_taxi_2024_df)
     ny_taxi_2024_df = impute_outliers_airport_fee(ny_taxi_2024_df)
@@ -263,5 +284,7 @@ def impute_all(ny_taxi_2024_df, fhv_2024_df, zone_long_lat_data):
     merged_2024_df = drop_high_fare(merged_2024_df)
     merged_2024_df = get_times(merged_2024_df)
     merged_2024_df = impute_geo_data(merged_2024_df, zone_long_lat_data)
+    merged_2024_df = impute_weather(merged_2024_df, weather_df)
+    merged_2024_df = clean_merged(merged_2024_df)
 
     return merged_2024_df
