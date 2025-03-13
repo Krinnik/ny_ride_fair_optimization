@@ -234,11 +234,11 @@ def impute_geo_data(merged_2024_df, zone_long_lat_data):
     merged_2024_df["evening_rush_hour"] = ((merged_2024_df["tpep_pickup_datetime"].dt.weekday < 5) & 
                             (merged_2024_df["tpep_pickup_datetime"].dt.hour.between(16, 18))).astype(int)
     
-    merged_2024_df = merged_2024_df[['second_of_day', 'day_of_year', 'is_weekend', 'is_holiday', 'PUx', 'PUy', 'DOx', 'DOy', 'trip_distance', 'ride_length', 'fare_amount', 'tolls_amount', 'Airport_fee', 'congestion_surcharge', 'total_amount', 'service', 'PU_Bronx', 'PU_Brooklyn',
+    merged_2024_df = merged_2024_df[['second_of_day', 'day_of_year', 'is_weekend', 'is_holiday', 'morning_rush_hour', 'evening_rush_hour', 'PUx', 'PUy', 'DOx', 'DOy', 'trip_distance', 'ride_length', 'fare_amount', 'tolls_amount', 'Airport_fee', 'congestion_surcharge', 'total_amount', 'service', 'PU_Bronx', 'PU_Brooklyn',
        'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
        'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
     
-    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fore', 'tolls', 'airport', 'congestion', 'total', 'service', 'PU_Bronx', 'PU_Brooklyn',
+    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'morning_rush', 'evening rush', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fare', 'tolls', 'airport', 'congestion', 'total', 'class', 'PU_Bronx', 'PU_Brooklyn',
        'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
        'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
     merged_2024_df = merged_2024_df.dropna()
