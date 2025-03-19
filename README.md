@@ -45,6 +45,12 @@ These features form a foundation for a user-facing UI that helps drivers identif
   - Early investor preview to gather feedback and demonstrate core functionality.
 - **[Link to more detailed app README](streamlit_app/ny_ride_service_predictor/README.md)**
   - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
+  
+  <h1 align = "center" > Lunar Lunacy Effect </h1>
+  <h3 align = "center" > Fact or Fiction? </h3>
+  <p align = "center" >
+  <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "300"/>
+    </p>
 
 ---
 
