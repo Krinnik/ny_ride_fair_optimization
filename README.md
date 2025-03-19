@@ -1,13 +1,24 @@
 # MaxiMile
 
-## Introduction
-We are building an intelligent ride-hailing solution that predicts both trip duration and potential hourly earnings. This initiative is led by three key team members:
+## Executive Summary  
+
+The **MaxiMile** team has devise an ensemble model that can be used by For Hire Vehicle *(FHV - eg. Uber, Lyft, Bolt, etc)* riders predicts both trip duration and trip costs. Additionally, for FHV drivers on any platform, a model predicts potential hourly earnings and next location to maximize their earnings.
+
+This initiative is led by three key team members:
 
 - **Zain (Product & Sales)**: Defines product vision and drives sales strategies, bridging technical and non-technical stakeholders.
 - **Mike (Data Scientist)**: Develops the predictive models for fare, duration, and hourly earnings, feature engineering for model performance.
 - **Nik (Lead Software Engineer)**: Builds the backend infrastructure, including real-time weather/traffic integration, builds product logic demo.
 
-The underlying data includes ride records, location coordinates, weather conditions, traffic levels, and timestamp information. We visualize this data to understand patterns and validate our models.
+## Data Landscape
+The underlying data includes ride records, location coordinates, weather conditions, traffic levels, and timestamp information. 
+We visualized this data to understand patterns and validate our models.
+
+**Data Sources**
+Below is the list of data sources that were incorporated into our model to make accurate predictions
+- Trip Data | NYC Taxi and Limousine Commission (2024)
+- Weather Data | Weather.com API, Metostat
+- Geolocation Data | GeoPy
 
 ---
 
