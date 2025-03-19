@@ -95,7 +95,7 @@ def get_weather_data(latitude, longitude):
                 stations_data = observation_response.json()
                 if stations_data['features']:
                     first_station_url = stations_data['features'][0]['id']
-                    station_observation_response = requests.get(first_station_url + '/observations/latest', timeout=5)
+                    station_observation_response = requests.get(first_station_url + '/observations/latest', timeout=10)
                     if station_observation_response.status_code == 200:
                         observation_data = station_observation_response.json()
                         prcp_mm = observation_data['properties'].get('precipLastHour', {}).get('value')
@@ -200,13 +200,7 @@ for index, row in coords_df.iterrows():
 
 # Display the map 
 st.subheader("Click on a marker to set Pickup or Dropoff (Optional)")
-map_width = 600 
-map_height = 500
-padding = (st.session_state.get('width', st.session_state.get('browser.innerWidth', 700)) - map_width) // 2
-with st.container():
-    st.markdown(f"<div style='padding: 0 {padding}px;'>", unsafe_allow_html=True)
-    map_data = st_folium(m, width=map_width, height=map_height, returned_objects=["last_object_clicked"])
-    st.markdown("</div>", unsafe_allow_html=True)
+map_data = st_folium(m, width=700, height=500, returned_objects=["last_object_clicked"])
 
 
 
