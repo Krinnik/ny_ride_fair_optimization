@@ -66,3 +66,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
 
 ## Contact & Further Information
 For questions, demos, or investment opportunities, please contact:
+
+Michael Brady - mvbrady85@gmail.com
+Nik Psyllas - nikpsyllas@gmail.com
+Zain Master - zain.master@gmail.com
