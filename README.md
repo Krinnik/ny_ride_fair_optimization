@@ -6,9 +6,9 @@ The **MaxiMile** team has devise an ensemble model that can be used by For Hire 
 
 This initiative is led by three key team members:
 
-- **Zain (Product & Sales)**: Defines product vision and drives sales strategies, bridging technical and non-technical stakeholders.
-- **Mike (Data Scientist)**: Develops the predictive models for fare, duration, and hourly earnings, feature engineering for model performance.
 - **Nik (Lead Software Engineer)**: Builds the backend infrastructure, including real-time weather/traffic integration, builds product logic demo.
+- **Mike (Data Scientist)**: Develops the predictive models for fare, duration, and hourly earnings, feature engineering for model performance.
+- **Zain (Product/Sales)**: Defined product vision and drives product/sales strategies, defined airport specific duration and cost model. 
 
 ## Data Landscape
 The underlying data includes ride records, location coordinates, weather conditions, traffic levels, and timestamp information. 
@@ -24,8 +24,8 @@ Below is the list of data sources that were incorporated into our model to make 
 
 ## Product Overview
 Our prototype demonstrates basic predictions of:
-- **Fare**
-- **Trip duration**
+- **Expected Trip Duration**
+- **Expected Trip Fare**
 
 The goal is to provide dynamic ride-hailing insights, integrating:
 - **Real-time weather**
@@ -54,11 +54,13 @@ These features form a foundation for a user-facing UI that helps drivers identif
 - Improved approach for accurately predicting trip times based on pickup/drop-off, congestion, etc.
 
 ### **Prototype Earnings-Per-Hour Model**
-- Allows drivers to see where they might earn more.
+- Allows drivers to discover pick-up locations in NYC, where they might have a higher potential earnings.
 - Outperforms a baseline (e.g., naive average predictions).
 
 ### **Future Modeling**
 - Plans to refine feature engineering, add more robust historical data, and incorporate surge/peak events.
+- Expand to include other major metropolitain areas with higher ridership density
+- -- Boston, Chicago, Los Angeles, Miami, Philadelphia, San Francisco, Seattle, and Washington DC
 
 ---
 
@@ -77,9 +79,16 @@ These features form a foundation for a user-facing UI that helps drivers identif
 
 ---
 
+## Expansion Data & Model Training
+- Expand to include other major metropolitain areas with higher ridership density
+- -- Boston, Chicago, Los Angeles, Miami, Philadelphia, San Francisco, Seattle, and Washington DC
+
+---
+
 ## Contact & Further Information
 For questions, demos, or investment opportunities, please contact:
 
+Zain Master - zain.master@gmail.com
 Michael Brady - mvbrady85@gmail.com
 Nik Psyllas - nikpsyllas@gmail.com
-Zain Master - zain.master@gmail.com
+
