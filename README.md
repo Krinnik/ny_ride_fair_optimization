@@ -32,6 +32,8 @@ These features form a foundation for a user-facing UI that helps drivers identif
   - Scalable and capable of real-time information updates (weather, traffic).
 - **Demo**  
   - Early investor preview to gather feedback and demonstrate core functionality.
+- **[Link to more detailed app README](streamlit_app/ny_ride_service_predictor/README.md)**
+  - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
 
 ---
 
