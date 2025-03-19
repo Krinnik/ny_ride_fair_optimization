@@ -152,26 +152,6 @@ current_date = st.sidebar.date_input("Current Date", datetime.now().date(), key=
 #else:
     #st.session_state['run_prediction'] = False
 
-
-
-# Create the Folium map 
-nyc_coords = [40.7128, -74.0060]
-m = folium.Map(location=nyc_coords, zoom_start=11)
-
-# Add interactive markers 
-for index, row in coords_df.iterrows():
-    tooltip = f"ID: {row['LocationID']}, Zone: {row['Zone']}"
-    folium.Marker(
-        [row['latitude'], row['longitude']],
-        tooltip=tooltip,
-        icon=folium.Icon(color='blue', icon='taxi', prefix='fa')
-    ).add_to(m)
-
-# Display the map 
-st.subheader("Click on a marker to set Pickup or Dropoff (Optional)")
-map_data = st_folium(m, width=700, height=500, returned_objects=["last_object_clicked"])
-
-
 # location and run buttons
 cols = st.columns([3, 3, 2]) 
 
@@ -203,6 +183,32 @@ st.markdown(
     </style>
     """,
     unsafe_allow_html=True,)
+
+
+# Create the Folium map 
+nyc_coords = [40.7128, -74.0060]
+m = folium.Map(location=nyc_coords, zoom_start=11)
+
+# Add interactive markers 
+for index, row in coords_df.iterrows():
+    tooltip = f"ID: {row['LocationID']}, Zone: {row['Zone']}"
+    folium.Marker(
+        [row['latitude'], row['longitude']],
+        tooltip=tooltip,
+        icon=folium.Icon(color='blue', icon='taxi', prefix='fa')
+    ).add_to(m)
+
+# Display the map 
+st.subheader("Click on a marker to set Pickup or Dropoff (Optional)")
+map_width = 600 
+map_height = 500
+padding = (st.session_state.get('width', st.session_state.get('browser.innerWidth', 700)) - map_width) // 2
+with st.container():
+    st.markdown(f"<div style='padding: 0 {padding}px;'>", unsafe_allow_html=True)
+    map_data = st_folium(m, width=map_width, height=map_height, returned_objects=["last_object_clicked"])
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
 
 def find_nearest_location(click_lat, click_lng, locations_df):
     nearest_location = None
