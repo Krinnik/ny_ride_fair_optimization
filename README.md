@@ -49,7 +49,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
   <h1 align = "Left" > MaxiMile </h1>
   <h3 align = "left" > Rider App for New York City </h3>
   <p align = "left" >
-  <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "300"/>
+  <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
     </p>
 
 ---
@@ -65,8 +65,8 @@ These features form a foundation for a user-facing UI that helps drivers identif
 
 ### **Future Modeling**
 - Plans to refine feature engineering, add more robust historical data, and incorporate surge/peak events.
-- Expand to include other major metropolitain areas with higher ridership density
-- -- Boston, Chicago, Los Angeles, Miami, Philadelphia, San Francisco, Seattle, and Washington DC
+- Experiment with other models and methods to boost accuracy of predictions
+
 
 ---
 
