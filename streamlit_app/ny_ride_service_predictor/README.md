@@ -1,4 +1,4 @@
-# NY Ride Service Price and Duration Prediction
+# MaxiMile App
 
 This Streamlit web application predicts the estimated price and travel duration for ride services (Yellow Cab, Uber, and Lyft) in New York City.
 ---
