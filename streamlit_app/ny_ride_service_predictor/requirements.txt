@@ -11,6 +11,5 @@ scikit-learn
 xgboost       
 numpy
 pytz
-ast
 requests
 category_encoders      
