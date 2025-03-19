@@ -1,0 +1,9 @@
+streamlit
+pandas
+pickle-mixin
+datetime
+holidays
+geopy
+requests
+folium
+streamlit-folium
