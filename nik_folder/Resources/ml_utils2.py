@@ -188,7 +188,7 @@ def get_times(merged_2024_df):
 
 def impute_geo_data(merged_2024_df, zone_long_lat_data):
     
-    def safe_wkb_loads(wkb_byte):
+    '''def safe_wkb_loads(wkb_byte):
         try:
             return wkb.loads(wkb_byte)
         except errors.WKTReadingError:
@@ -229,7 +229,7 @@ def impute_geo_data(merged_2024_df, zone_long_lat_data):
     merged_2024_df = merged_2024_df.merge(geo_zone_proj.rename(columns={"centroid_x": "DOx", "centroid_y": "DOy"}), 
                     on="DOLocationID", how="left")
     
-    merged_2024_df = merged_2024_df.drop(columns=["LocationID_x", "LocationID_y", "PULocationID_x", "PULocationID_x", "PULocationID_y", "DOLocationID"])
+    merged_2024_df = merged_2024_df.drop(columns=["LocationID_x", "LocationID_y", "PULocationID_x", "PULocationID_x", "PULocationID_y", "DOLocationID"])'''
 
     merged_2024_df["morning_rush_hour"] = ((merged_2024_df["tpep_pickup_datetime"].dt.weekday < 5) & 
                            (merged_2024_df["tpep_pickup_datetime"].dt.hour.between(7, 9))).astype(int)
@@ -255,13 +255,9 @@ def impute_weather(merged_2024_df, weather_df):
 
 
 def clean_merged(merged_2024_df):
-    merged_2024_df = merged_2024_df[['second_of_day', 'day_of_year', 'is_weekend', 'is_holiday', 'morning_rush_hour', 'evening_rush_hour', 'prcp', 'temp(f)', 'PUx', 'PUy', 'DOx', 'DOy', 'trip_distance', 'ride_length', 'fare_amount', 'tolls_amount', 'Airport_fee', 'congestion_surcharge', 'total_amount', 'service', 'PU_Bronx', 'PU_Brooklyn',
-       'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
-       'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
+    merged_2024_df = merged_2024_df[['second_of_day', 'day_of_year', 'is_weekend', 'is_holiday', 'morning_rush_hour', 'evening_rush_hour', 'PULocationID', 'DOLocationID', 'prcp', 'temp(f)', 'trip_distance', 'ride_length', 'fare_amount', 'tolls_amount', 'Airport_fee', 'congestion_surcharge', 'total_amount', 'service']]
     
-    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'morning_rush', 'evening rush', 'prcp', 'temp', 'PUx', 'PUy', 'DOx', 'DOy', 'distance', 'duration(sec)', 'fare', 'tolls', 'airport', 'congestion', 'total', 'class', 'PU_Bronx', 'PU_Brooklyn',
-       'PU_Manhattan', 'PU_Queens', 'PU_Staten Island', 'DO_Bronx',
-       'DO_Brooklyn', 'DO_Manhattan', 'DO_Queens', 'DO_Staten Island']]
+    merged_2024_df.columns = [['second_of_day', 'day_of_year', 'weekend', 'holiday', 'morning_rush', 'evening rush', 'PULocationID', 'DOLocationID', 'prcp', 'temp', 'distance', 'duration(sec)', 'fare', 'tolls', 'airport', 'congestion', 'total', 'class']]
     merged_2024_df = merged_2024_df.dropna()
     return merged_2024_df
 
