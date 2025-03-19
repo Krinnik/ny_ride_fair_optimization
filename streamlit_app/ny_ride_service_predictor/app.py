@@ -268,11 +268,7 @@ if st.session_state['run_prediction']:
 
     temp, prcp = get_weather_data(pickup_row['latitude'], pickup_row['longitude'])
 
-    airport_do_ids = [1, 32, 138]
-    fhv_classes = [1, 2]
-    airport = 0.0
-    if (dropoff_location_id in airport_do_ids and 1 in fhv_classes) or (pickup_location_id == 1 and 0 == 0): # Example logic
-        airport = 2.50
+    
 
 
     test_input_dict = {
@@ -287,7 +283,7 @@ if st.session_state['run_prediction']:
         'prcp': [prcp if prcp != "N/A" else 0],
         'temp': [temp if temp != "N/A" else 0],
         'distance': [distance],
-        'airport': [airport],
+        'airport': [0.0],
         'congestion': [congestion],
         'class': [0]
     }
@@ -306,6 +302,18 @@ if st.session_state['run_prediction']:
         col_name = f'class_{i}'
         if col_name not in test_input.columns:
             test_input[col_name] = 0
+
+        
+    airport_do_ids = [1, 32, 138]
+    fhv_classes = [1, 2]
+    airport = 0.0
+    if dropoff_location_id in airport_do_ids and int(test_input['class'].iloc[0]) in fhv_classes:
+        airport = 2.50
+
+    elif pickup_location_id in [132, 138] and int(test_input['class'].iloc[0]) == 0:
+        airport = 1.75
+    test_input['airport'] = airport
+
 
     # Predict Yellow Cab Duration
     predicted_duration_yellow = xgbr2.predict(test_input[duration_features])[0]
