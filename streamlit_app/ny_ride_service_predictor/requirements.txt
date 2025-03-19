@@ -10,7 +10,6 @@ streamlit-folium
 scikit-learn 
 xgboost       
 numpy
-math
 pytz
 ast
 requests
