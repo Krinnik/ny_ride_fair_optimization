@@ -52,7 +52,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
   - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
 
 <p float="left">
-  <img src="Resources/MaxiMile_App.png" width="400" />
+  <img src="Resources/MaxiMile_App.png" width="50" />
   <img src="Resources/MaxiMile_Rider_App.png" width="400" /> 
 </p>
 
