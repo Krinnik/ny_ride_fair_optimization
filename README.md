@@ -1,5 +1,9 @@
 # MaxiMile
-
+<h1 align = "center" > MaxiMile </h1>
+  <h3 align = "center" > Maximize your time & money with our intelligent ride solution </h3>
+  <p align = "center" >
+  <img title="MaxiMile" img src = "Resources/MaxiMile.png" alt = "MaxiMile" width = "500"/>
+    </p>
 ## Executive Summary  
 
 The **MaxiMile** team has devise an ensemble model that can be used by For Hire Vehicle *(FHV - eg. Uber, Lyft, Bolt, etc)* riders predicts both trip duration and trip costs. Additionally, for FHV drivers on any platform, a model predicts potential hourly earnings and next location to maximize their earnings.
