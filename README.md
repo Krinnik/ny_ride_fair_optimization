@@ -42,10 +42,10 @@ These features form a foundation for a user-facing UI that helps drivers identif
 ---
 
 ## Prototype Demo
-  <h1 align = "center" > MaxiMile </h1>
-  <h3 align = "center" > Rider App for New York City </h3>
-  <p align = "center" >
-  <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "600"/>
+  <h1 align = "left" > MaxiMile </h1>
+  <h3 align = "left" > Rider App for New York City </h3>
+  <p align = "left" >
+  <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "700"/>
     </p>
 
 - **Predictive Engine**  
