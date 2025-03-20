@@ -58,7 +58,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
   - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
 
   <h1 align = "Left" > MaxiMile </h1>
-  <h3 align = "left" > Rider App for New York City </h3>
+  <h3 align = "left" > Scan Below to access the Rider App for New York City </h3>
   <p align = "left" >
   <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
     </p>
