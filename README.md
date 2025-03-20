@@ -2,7 +2,7 @@
 <h1 align = "center" > MaxiMile </h1>
   <h3 align = "center" > Maximize your time & money with our intelligent ride solution </h3>
   <p align = "center" >
-  <img title="MaxiMile" img src = "Resources/MaxiMile.png" alt = "MaxiMile" width = "500"/>
+  <img title="MaxiMile" img src = "Resources/MaxiMile.png" alt = "MaxiMile" width = "1000"/>
     </p>
 ## Executive Summary  
 
@@ -49,12 +49,12 @@ These features form a foundation for a user-facing UI that helps drivers identif
   - Early investor preview to gather feedback and demonstrate core functionality.
 - **[Link to more detailed app README](streamlit_app/ny_ride_service_predictor/README.md)**
   - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
-  
-  <h1 align = "Left" > MaxiMile </h1>
-  <h3 align = "left" > Rider App for New York City </h3>
-  <p align = "left" >
-  <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
-    </p>
+
+<p float="left">
+  <img src="Resources/MaxiMile_App.png" width="100" />
+  <img src="Resources/MaxiMile_Rider_App.png" width="300" /> 
+</p>
+
 
 ---
 
