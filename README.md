@@ -42,8 +42,8 @@ These features form a foundation for a user-facing UI that helps drivers identif
 ---
 
 ## Prototype Demo
-  <h1 align = "left" > MaxiMile (Web App) </h1>
-  <h3 align = "left" > Rider App for New York City </h3>
+  <h1 align = "left" > MaxiMile </h1>
+  <h3 align = "left" > Rider App for New York City (Web App)</h3>
   <p align = "left" >
   <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "700"/>
     </p>
@@ -57,7 +57,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
 - **[Link to more detailed app README](streamlit_app/ny_ride_service_predictor/README.md)**
   - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
 
-  <h3 align = "left" > Scan Below to access the Rider App for New York City </h3>
+  <h3 align = "left" > Scan Below to access the Rider App for New York City (Mobile) </h3>
   <p align = "left" >
   <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
     </p>
