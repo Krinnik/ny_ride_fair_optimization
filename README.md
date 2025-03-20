@@ -45,7 +45,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
   <h1 align = "center" > MaxiMile </h1>
   <h3 align = "center" > Rider App for New York City </h3>
   <p align = "center" >
-  <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "400"/>
+  <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "600"/>
     </p>
 
 - **Predictive Engine**  
