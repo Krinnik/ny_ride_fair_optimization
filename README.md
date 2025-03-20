@@ -42,6 +42,12 @@ These features form a foundation for a user-facing UI that helps drivers identif
 ---
 
 ## Prototype Demo
+  <h1 align = "Left" > MaxiMile </h1>
+  <h3 align = "left" > Rider App for New York City </h3>
+  <p align = "left" >
+  <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "400"/>
+    </p>
+
 - **Predictive Engine**  
   - Combines current location, destination, and dynamic external data.
 - **Backend Infrastructure**  
@@ -51,12 +57,11 @@ These features form a foundation for a user-facing UI that helps drivers identif
 - **[Link to more detailed app README](streamlit_app/ny_ride_service_predictor/README.md)**
   - **Try it here: [MaxiMile](https://maximile.streamlit.app/)**
 
-<p float="left">
-  <img src="Resources/MaxiMile_App.png" width="50" />
-  <img src="Resources/MaxiMile_Rider_App.png" width="400" /> 
-</p>
-
-
+  <h1 align = "Left" > MaxiMile </h1>
+  <h3 align = "left" > Rider App for New York City </h3>
+  <p align = "left" >
+  <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
+    </p>
 ---
 
 ## Modeling Advances
