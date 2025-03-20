@@ -42,9 +42,9 @@ These features form a foundation for a user-facing UI that helps drivers identif
 ---
 
 ## Prototype Demo
-  <h1 align = "Left" > MaxiMile </h1>
-  <h3 align = "left" > Rider App for New York City </h3>
-  <p align = "left" >
+  <h1 align = "center" > MaxiMile </h1>
+  <h3 align = "center" > Rider App for New York City </h3>
+  <p align = "center" >
   <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "400"/>
     </p>
 
