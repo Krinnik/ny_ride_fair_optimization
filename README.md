@@ -2,7 +2,7 @@
 <h1 align = "center" > MaxiMile </h1>
   <h3 align = "center" > Maximize your time & money with our intelligent ride solution </h3>
   <p align = "center" >
-  <img title="MaxiMile" img src = "Resources/MaxiMile.png" alt = "MaxiMile" width = "1000"/>
+  <img title="MaxiMile" img src = "sandboxes/Resources/MaxiMile.png" alt = "MaxiMile" width = "1000"/>
     </p>
     
 ## Executive Summary  
@@ -45,7 +45,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
   <h1 align = "left" > MaxiMile </h1>
   <h3 align = "left" > Rider App for New York City (Web App)</h3>
   <p align = "left" >
-  <img title="MaxiMile App" img src = "Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "700"/>
+  <img title="MaxiMile App" img src = "sandboxes/Resources/MaxiMile_Rider_App.png" alt = "MaxiMile App" width = "700"/>
     </p>
 
 - **Predictive Engine**  
@@ -59,7 +59,7 @@ These features form a foundation for a user-facing UI that helps drivers identif
 
   <h3 align = "left" > Scan Below to access the Rider App for New York City (Mobile) </h3>
   <p align = "left" >
-  <img title="MaxiMile App" img src = "Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
+  <img title="MaxiMile App" img src = "sandboxes/Resources/MaxiMile_App.png" alt = "MaxiMile App" width = "200"/>
     </p>
 ---
 
