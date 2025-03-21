@@ -178,7 +178,7 @@ st.markdown(
     """
     <style>
     button.st-emotion-cache-b0y9n5.em9zgd02 {
-        margin-top: 27px !important; /* Adjust the value as needed */
+        margin-top: 27px 
     }
     </style>
     """,
@@ -288,13 +288,13 @@ if st.session_state['run_prediction']:
         'class': [0]
     }
     test_input = pd.DataFrame(test_input_dict)
-    test_input_df_duration = pd.DataFrame(test_input_dict)
+    test_input_duration = pd.DataFrame(test_input_dict.copy())
 
 
     test_input['PULocationID_price_encoded'] = encoder_pu_price.transform(test_input['PULocationID'])
     test_input['DOLocationID_price_encoded'] = encoder_do_price.transform(test_input['DOLocationID'])
-    test_input['PULocationID_duration_encoded'] = encoder_pu_duration.transform(test_input['PULocationID'])
-    test_input['DOLocationID_duration_encoded'] = encoder_do_duration.transform(test_input['DOLocationID'])
+    test_input_duration['PULocationID_duration_encoded'] = encoder_pu_duration.transform(test_input_duration['PULocationID'])
+    test_input_duration['DOLocationID_duration_encoded'] = encoder_do_duration.transform(test_input_duration['DOLocationID'])
 
     test_input = pd.get_dummies(test_input, columns=['class'], prefix='class', drop_first=False)
 
@@ -302,6 +302,13 @@ if st.session_state['run_prediction']:
         col_name = f'class_{i}'
         if col_name not in test_input.columns:
             test_input[col_name] = 0
+    
+    test_input_duration = pd.get_dummies(test_input_duration, columns=['class'], prefix='class', drop_first=False)
+
+    for i in range(3):
+        col_name = f'class_{i}'
+        if col_name not in test_input_duration.columns:
+            test_input_duration[col_name] = 0
 
         
     airport_do_ids = [1, 132, 138]
@@ -316,7 +323,7 @@ if st.session_state['run_prediction']:
 
 
     # Predict Yellow Cab Duration
-    predicted_duration_yellow = xgbr2.predict(test_input[duration_features])[0]
+    predicted_duration_yellow = xgbr2.predict(test_input_duration[duration_features])[0]
     test_input['durationsec'] = predicted_duration_yellow
     test_df = test_input[features].copy()
 
@@ -333,19 +340,21 @@ if st.session_state['run_prediction']:
 
     with col2:
         # Uber Prediction
-        test_input_uber = test_input.copy()
+        test_input_uber = test_input_duration.copy()
         test_input_uber[['class_0', 'class_1', 'class_2']] = [0, 1, 0]
         predicted_duration_uber = xgbr2.predict(test_input_uber[duration_features])[0]
-        test_input_uber_price = test_input_uber[features]
+        test_input_uber_price = test_df.copy()
+        test_input_uber_price[['class_0', 'class_1', 'class_2']] = [0, 1, 0]
         predicted_price_uber = xgbr.predict(test_input_uber_price)[0]
         col_uber.metric("Uber", f"${predicted_price_uber:.2f}", f"{predicted_duration_uber / 60:.2f} mins")
 
     with col3:
         # Lyft Prediction
-        test_input_lyft = test_input.copy()
+        test_input_lyft = test_input_duration.copy()
         test_input_lyft[['class_0', 'class_1', 'class_2']] = [0, 0, 1]
         predicted_duration_lyft = xgbr2.predict(test_input_lyft[duration_features])[0]
-        test_input_lyft_price = test_input_lyft[features]
+        test_input_lyft_price = test_df.copy()
+        test_input_lyft_price[['class_0', 'class_1', 'class_2']] = [0, 0, 1]
         predicted_price_lyft = xgbr.predict(test_input_lyft_price)[0]
         col_lyft.metric("Lyft", f"${predicted_price_lyft:.2f}", f"{predicted_duration_lyft / 60:.2f} mins")
 
