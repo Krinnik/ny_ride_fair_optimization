@@ -304,13 +304,13 @@ if st.session_state['run_prediction']:
             test_input[col_name] = 0
 
         
-    airport_do_ids = [1, 32, 138]
-    fhv_classes = [1, 2]
+    airport_do_ids = [1, 132, 138]
+    fhv_classes = int(test_input['class_1'].iloc[0]) == 1 or int(test_input['class_2'].iloc[0]) == 1
     airport = 0.0
-    if dropoff_location_id in airport_do_ids and int(test_input['class'].iloc[0]) in fhv_classes:
+    if dropoff_location_id in airport_do_ids and fhv_classes:
         airport = 2.50
 
-    elif pickup_location_id in [132, 138] and int(test_input['class'].iloc[0]) == 0:
+    elif pickup_location_id in [132, 138] and int(test_input['class_0'].iloc[0]) == 0:
         airport = 1.75
     test_input['airport'] = airport
 

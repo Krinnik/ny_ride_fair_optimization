@@ -134,6 +134,15 @@ def impute_negatives_fhv(fhv_2024_df):
 
     return fhv_2024_df
 
+def impute_fhv_airport_fee(fhv_2024_df):
+    ids = [1, 132, 138]
+    airport_yes = (fhv_2024_df['PULocationID'].isin(ids)) | (fhv_2024_df['DOLocationID'].isin(ids))
+    airport_no = (~fhv_2024_df['PULocationID'].isin(ids)) & (~fhv_2024_df['DOLocationID'].isin(ids))
+
+    fhv_2024_df.loc[airport_yes, 'Airport_fee'] = 2.50
+    fhv_2024_df.loc[airport_no, 'Airport_fee'] = 0
+    return fhv_2024_df
+
 
 def calc_total(fhv_2024_df):
     calc = (fhv_2024_df.index)
@@ -278,6 +287,7 @@ def impute_all(ny_taxi_2024_df, fhv_2024_df, zone_long_lat_data, weather_df):
     fhv_2024_df = impute_service(fhv_2024_df)
     fhv_2024_df = resample_uber(fhv_2024_df)
     fhv_2024_df = impute_negatives_fhv(fhv_2024_df)
+    fhv_2024_df = impute_fhv_airport_fee(fhv_2024_df)
     fhv_2024_df = calc_total(fhv_2024_df)
     merged_2024_df = merge_data(ny_taxi_2024_df, fhv_2024_df)
     merged_2024_df = drop_unknowns_fhv(merged_2024_df)

@@ -134,6 +134,14 @@ def impute_negatives_fhv(fhv_2024_df):
 
     return fhv_2024_df
 
+def impute_fhv_airport_fee(fhv_2024_df):
+    ids = [1, 132, 138]
+    airport_yes = (fhv_2024_df['PULocationID'].isin(ids)) | (fhv_2024_df['DOLocationID'].isin(ids))
+    airport_no = (~fhv_2024_df['PULocationID'].isin(ids)) & (~fhv_2024_df['DOLocationID'].isin(ids))
+
+    fhv_2024_df.loc[airport_yes, 'Airport_fee'] = 2.50
+    fhv_2024_df.loc[airport_no, 'Airport_fee'] = 0
+    return fhv_2024_df
 
 def calc_total(fhv_2024_df):
     calc = (fhv_2024_df.index)
@@ -187,49 +195,6 @@ def get_times(merged_2024_df):
     return merged_2024_df
 
 def impute_geo_data(merged_2024_df, zone_long_lat_data):
-    
-    '''def safe_wkb_loads(wkb_byte):
-        try:
-            return wkb.loads(wkb_byte)
-        except errors.WKTReadingError:
-            return Point(0,0)
-
-    zone_long_lat_data['geometry'] = zone_long_lat_data['geometry'].apply(safe_wkb_loads)
-
-    geo_zone = gpd.GeoDataFrame(zone_long_lat_data, geometry=zone_long_lat_data['geometry'], crs="EPSG:4326")
-
-    #project geodf
-    geo_zone_proj = geo_zone.to_crs("EPSG:3857")
-
-    pu_data = zone_long_lat_data[["LocationID", "borough"]].copy()
-    pu_data.rename(columns={"LocationID": "PULocationID"}, inplace=True)
-    pu_dummies = pd.get_dummies(pu_data["borough"], prefix="PU")
-    pu_data = pd.concat([pu_data, pu_dummies], axis=1).drop(columns=["borough"])
-    merged_2024_df = merged_2024_df.merge(pu_data, on="PULocationID", how="left")
-    merged_2024_df = merged_2024_df.drop(columns="PU_EWR") #drop for one-hot
-
-    do_data = zone_long_lat_data[["LocationID", "borough"]].copy()
-    do_data.rename(columns={"LocationID": "DOLocationID"}, inplace=True)
-    do_dummies = pd.get_dummies(do_data["borough"], prefix="DO")
-    do_data = pd.concat([do_data, do_dummies], axis=1).drop(columns=["borough"])
-    merged_2024_df = merged_2024_df.merge(do_data, on="DOLocationID", how="left")
-    merged_2024_df = merged_2024_df.drop(columns="DO_EWR") #drop for one-hot
-    
-    geo_zone_proj["centroid_x"] = geo_zone_proj.geometry.centroid.x
-    geo_zone_proj["centroid_y"] = geo_zone_proj.geometry.centroid.y
-    geo_zone_proj["area"] = geo_zone_proj.geometry.area
-    geo_zone_proj["perimeter"] = geo_zone_proj.geometry.length
-
-    geo_zone_proj = geo_zone_proj.loc[:, ["centroid_x", "centroid_y", "LocationID"]]
-    geo_zone_proj["PULocationID"] = geo_zone_proj["LocationID"]
-    merged_2024_df = merged_2024_df.merge(geo_zone_proj.rename(columns={"centroid_x": "PUx", "centroid_y": "PUy"}), 
-                    on="PULocationID", how="left")
-
-    geo_zone_proj["DOLocationID"] = geo_zone_proj["LocationID"]
-    merged_2024_df = merged_2024_df.merge(geo_zone_proj.rename(columns={"centroid_x": "DOx", "centroid_y": "DOy"}), 
-                    on="DOLocationID", how="left")
-    
-    merged_2024_df = merged_2024_df.drop(columns=["LocationID_x", "LocationID_y", "PULocationID_x", "PULocationID_x", "PULocationID_y", "DOLocationID"])'''
 
     merged_2024_df["morning_rush_hour"] = ((merged_2024_df["tpep_pickup_datetime"].dt.weekday < 5) & 
                            (merged_2024_df["tpep_pickup_datetime"].dt.hour.between(7, 9))).astype(int)
@@ -274,6 +239,7 @@ def impute_all(ny_taxi_2024_df, fhv_2024_df, zone_long_lat_data, weather_df):
     fhv_2024_df = impute_service(fhv_2024_df)
     fhv_2024_df = resample_uber(fhv_2024_df)
     fhv_2024_df = impute_negatives_fhv(fhv_2024_df)
+    fhv_2024_df = impute_fhv_airport_fee(fhv_2024_df)
     fhv_2024_df = calc_total(fhv_2024_df)
     merged_2024_df = merge_data(ny_taxi_2024_df, fhv_2024_df)
     merged_2024_df = drop_unknowns_fhv(merged_2024_df)
