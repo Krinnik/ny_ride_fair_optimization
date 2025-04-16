@@ -44,11 +44,11 @@ features = [
             'distance',
             'airport',
             'congestion',
-            'PULocationID_price_encoded',
-            'DOLocationID_price_encoded',
             'class_0',  
             'class_1',
-            'class_2']
+            'class_2',
+            'PULocationID_price_encoded',
+            'DOLocationID_price_encoded']
 
 duration_features = [
             'second_of_day',
@@ -62,11 +62,11 @@ duration_features = [
             'distance',
             'airport',
             'congestion',
-            'PULocationID_duration_encoded',
-            'DOLocationID_duration_encoded',
             'class_0', 
             'class_1',
-            'class_2']
+            'class_2',
+            'PULocationID_duration_encoded',
+            'DOLocationID_duration_encoded']
 
 
 def calc_distance(coord1, coord2):
@@ -316,6 +316,8 @@ if st.session_state['run_prediction']:
     airport = 0.0
     if dropoff_location_id in airport_do_ids and fhv_classes:
         airport = 2.50
+    elif pickup_location_id in airport_do_ids and fhv_classes:
+        airport = 2.50
 
     elif pickup_location_id in [132, 138] and int(test_input['class_0'].iloc[0]) == 0:
         airport = 1.75
@@ -331,32 +333,101 @@ if st.session_state['run_prediction']:
     st.subheader("Prediction Results")
     col_yellow, col_uber, col_lyft = st.columns([1, 1, 1])
 
-    col1, col2, col3 = st.columns(3)
+    # Yellow Cab Prediction
+    predicted_price_yellow = xgbr.predict(test_df)[0]
+        
+    test_input_uber = test_input_duration.copy()
+    test_input_uber[['class_0', 'class_1', 'class_2']] = [0, 1, 0]
+    predicted_duration_uber = xgbr2.predict(test_input_uber[duration_features])[0]
+    test_input_uber_price = test_df.copy()
+    test_input_uber_price[['class_0', 'class_1', 'class_2']] = [0, 1, 0]
+    predicted_price_uber = xgbr.predict(test_input_uber_price)[0]
+    
 
-    with col1:
+    test_input_lyft = test_input_duration.copy()
+    test_input_lyft[['class_0', 'class_1', 'class_2']] = [0, 0, 1]
+    predicted_duration_lyft = xgbr2.predict(test_input_lyft[duration_features])[0]
+    test_input_lyft_price = test_df.copy()
+    test_input_lyft_price[['class_0', 'class_1', 'class_2']] = [0, 0, 1]
+    predicted_price_lyft = xgbr.predict(test_input_lyft_price)[0]
+
+    # Collect the predicted prices and durations
+    prices = {
+        "Yellow Cab": predicted_price_yellow,
+        "Uber": predicted_price_uber,
+        "Lyft": predicted_price_lyft,
+    }
+    durations = {
+        "Yellow Cab": predicted_duration_yellow / 60,
+        "Uber": predicted_duration_uber / 60,
+        "Lyft": predicted_duration_lyft / 60,
+    }
+
+    # Determine the cheapest and shortest
+    cheapest_service = min(prices, key=prices.get)
+    shortest_service = min(durations, key=durations.get)
+
+    # Function to format metric with color and arrow
+    def format_metric(value, is_best):
+        if is_best:
+            delta = None 
+            delta_color = "normal"
+        else:
+            delta = None 
+            delta_color = "inverse"
+
+        return f"{value}", delta, delta_color
+
+    with col_yellow:
         # Yellow Cab Prediction
-        predicted_price_yellow = xgbr.predict(test_df)[0]
-        col_yellow.metric("Yellow Cab", f"${predicted_price_yellow:.2f}", f"{predicted_duration_yellow / 60:.2f} mins")
+        is_cheapest_yellow = "Yellow Cab" == cheapest_service
+        is_shortest_yellow = "Yellow Cab" == shortest_service
 
-    with col2:
+        price_value_yellow, price_delta_yellow, price_color_yellow = format_metric(f"${predicted_price_yellow:.2f}", is_cheapest_yellow)
+        duration_value_yellow, duration_delta_yellow, duration_color_yellow = format_metric(f"{predicted_duration_yellow / 60:.2f} mins", is_shortest_yellow)
+
+        col_yellow.metric(
+            "Yellow Cab",
+            price_value_yellow,
+            f"{duration_value_yellow} {'⬆️' if is_shortest_yellow else '⬇️'}",
+            delta_color=price_color_yellow if not is_cheapest_yellow else "normal",
+        )
+        col_yellow.markdown(f"<p style='color:{'green' if is_cheapest_yellow else 'red'}; font-size:smaller;'>{'⬆️' if is_cheapest_yellow else '⬇️'} Price</p>", unsafe_allow_html=True)
+
+    with col_uber:
         # Uber Prediction
-        test_input_uber = test_input_duration.copy()
-        test_input_uber[['class_0', 'class_1', 'class_2']] = [0, 1, 0]
-        predicted_duration_uber = xgbr2.predict(test_input_uber[duration_features])[0]
-        test_input_uber_price = test_df.copy()
-        test_input_uber_price[['class_0', 'class_1', 'class_2']] = [0, 1, 0]
-        predicted_price_uber = xgbr.predict(test_input_uber_price)[0]
-        col_uber.metric("Uber", f"${predicted_price_uber:.2f}", f"{predicted_duration_uber / 60:.2f} mins")
+        is_cheapest_uber = "Uber" == cheapest_service
+        is_shortest_uber = "Uber" == shortest_service
 
-    with col3:
+        price_value_uber, price_delta_uber, price_color_uber = format_metric(f"${predicted_price_uber:.2f}", is_cheapest_uber)
+        duration_value_uber, duration_delta_uber, duration_color_uber = format_metric(f"{predicted_duration_uber / 60:.2f} mins", is_shortest_uber)
+
+        col_uber.metric(
+            "Uber",
+            price_value_uber,
+            f"{duration_value_uber} {'⬆️' if is_shortest_uber else '⬇️'}",
+            delta_color=price_color_uber if not is_cheapest_uber else "normal",
+        )
+        col_uber.markdown(f"<p style='color:{'green' if is_cheapest_uber else 'red'}; font-size:smaller;'>{'⬆️' if is_cheapest_uber else '⬇️'} Price</p>", unsafe_allow_html=True)
+
+    with col_lyft:
         # Lyft Prediction
-        test_input_lyft = test_input_duration.copy()
-        test_input_lyft[['class_0', 'class_1', 'class_2']] = [0, 0, 1]
-        predicted_duration_lyft = xgbr2.predict(test_input_lyft[duration_features])[0]
-        test_input_lyft_price = test_df.copy()
-        test_input_lyft_price[['class_0', 'class_1', 'class_2']] = [0, 0, 1]
-        predicted_price_lyft = xgbr.predict(test_input_lyft_price)[0]
-        col_lyft.metric("Lyft", f"${predicted_price_lyft:.2f}", f"{predicted_duration_lyft / 60:.2f} mins")
+        is_cheapest_lyft = "Lyft" == cheapest_service
+        is_shortest_lyft = "Lyft" == shortest_service
+
+        price_value_lyft, price_delta_lyft, price_color_lyft = format_metric(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
+        duration_value_lyft, duration_delta_lyft, duration_color_uber = format_metric(f"{predicted_duration_lyft / 60:.2f} mins", is_shortest_lyft)
+
+        col_lyft.metric(
+            "Lyft",
+            price_value_lyft,
+            f"{duration_value_lyft} {'⬆️' if is_shortest_lyft else '⬇️'}",
+            delta_color=price_color_lyft if not is_cheapest_lyft else "normal",
+        )
+        col_lyft.markdown(f"<p style='color:{'green' if is_cheapest_lyft else 'red'}; font-size:smaller;'>{'⬆️' if is_cheapest_lyft else '⬇️'} Price</p>", unsafe_allow_html=True)
+
+
+
 
     st.subheader("Trip Information")
     st.write(f"**Pickup Zone:** {pickup_zone} (ID: {pickup_location_id})")
