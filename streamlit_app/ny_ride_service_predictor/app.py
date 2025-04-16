@@ -367,6 +367,8 @@ if st.session_state['run_prediction']:
     cheapest_service = min(prices, key=prices.get)
     shortest_service = min(durations, key=durations.get)
 
+    st.write(f"Cheapest Service: {cheapest_service}")
+    st.write(f"Shortest Service: {shortest_service}")
 
     # Prices
     st.subheader("Price Comparison")
