@@ -367,70 +367,38 @@ if st.session_state['run_prediction']:
     cheapest_service = min(prices, key=prices.get)
     shortest_service = min(durations, key=durations.get)
 
-    # Function to format metric with color and arrow
-    def format_metric_price(value, is_best):
-        if is_best:
-            delta_color = "normal"  
-        else:
-            delta_color = "inverse" 
-        return f"{value}", None, delta_color
-    
-    def format_metric_color(value, is_best):
-        if is_best:
-            delta_color = "normal"  
-        else:
-            delta_color = "inverse" 
-        return f"{value}", delta_color
 
-
-    with col_yellow:
-        # Yellow Cab Prediction
+    # Prices
+    st.subheader("Price Comparison")
+    price_cols = st.columns(3)
+    with price_cols[0]:
         is_cheapest_yellow = "Yellow Cab" == cheapest_service
-        is_shortest_yellow = "Yellow Cab" == shortest_service
-
-        price_value_yellow, price_delta_yellow, price_color_yellow = format_metric_price(f"${predicted_price_yellow:.2f}", is_cheapest_yellow)
-        duration_value_yellow, duration_color_yellow = format_metric_color(f"{predicted_duration_yellow / 60:.2f} mins", is_shortest_yellow)
-        
-        col_yellow.metric(
-            "Yellow Cab",
-            price_value_yellow,
-            duration_value_yellow,
-            delta_color=price_color_yellow,
-        )
-       
-        
-
-    with col_uber:
-        # Uber Prediction
+        price_color_yellow = "normal" if is_cheapest_yellow else "inverse"
+        st.metric("Yellow Cab", f"${predicted_price_yellow:.2f}", delta_color=price_color_yellow)
+    with price_cols[1]:
         is_cheapest_uber = "Uber" == cheapest_service
-        is_shortest_uber = "Uber" == shortest_service
-
-        price_value_uber, price_delta_uber, price_color_uber = format_metric_price(f"${predicted_price_uber:.2f}", is_cheapest_uber)
-        duration_value_uber, duration_color_uber = format_metric_color(f"{predicted_duration_uber / 60:.2f} mins", is_shortest_uber)
-        
-        col_uber.metric(
-            "Uber",
-            price_value_uber,
-            duration_value_uber,
-            delta_color=price_color_uber,
-        )
-        
-        
-
-    with col_lyft:
-        # Lyft Prediction
+        price_color_uber = "normal" if is_cheapest_uber else "inverse"
+        st.metric("Uber", f"${predicted_price_uber:.2f}", delta_color=price_color_uber)
+    with price_cols[2]:
         is_cheapest_lyft = "Lyft" == cheapest_service
-        is_shortest_lyft = "Lyft" == shortest_service
+        price_color_lyft = "normal" if is_cheapest_lyft else "inverse"
+        st.metric("Lyft", f"${predicted_price_lyft:.2f}", delta_color=price_color_lyft)
 
-        price_value_lyft, price_delta_uber, price_color_lyft = format_metric_price(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
-        duration_value_lyft, duration_color_lyft = format_metric_color(f"{predicted_duration_lyft / 60:.2f} mins", is_shortest_lyft)
-        
-        col_lyft.metric(
-            "Lyft",
-            price_value_lyft,
-            duration_value_lyft,
-            delta_color=price_color_lyft,
-        )
+    # Durations
+    st.subheader("Duration Comparison")
+    duration_cols = st.columns(3)
+    with duration_cols[0]:
+        is_shortest_yellow = "Yellow Cab" == shortest_service
+        duration_color_yellow = "normal" if is_shortest_yellow else "inverse"
+        st.metric("Yellow Cab", f"{predicted_duration_yellow / 60:.2f} mins", delta_color=duration_color_yellow)
+    with duration_cols[1]:
+        is_shortest_uber = "Uber" == shortest_service
+        duration_color_uber = "normal" if is_shortest_uber else "inverse"
+        st.metric("Uber", f"{predicted_duration_uber / 60:.2f} mins", delta_color=duration_color_uber)
+    with duration_cols[2]:
+        is_shortest_lyft = "Lyft" == shortest_service
+        duration_color_lyft = "normal" if is_shortest_lyft else "inverse"
+        st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins", delta_color=duration_color_lyft)
         
         
         
