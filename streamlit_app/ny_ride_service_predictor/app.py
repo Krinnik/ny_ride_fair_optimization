@@ -389,7 +389,7 @@ if st.session_state['run_prediction']:
         is_shortest_yellow = "Yellow Cab" == shortest_service
 
         price_value_yellow, price_delta_yellow, price_color_yellow = format_metric_price(f"${predicted_price_yellow:.2f}", is_cheapest_yellow)
-        duration_value_yellow = format_metric_color(f"{predicted_duration_yellow / 60:.2f} mins", is_shortest_yellow)
+        duration_value_yellow, duration_color_yellow = format_metric_color(f"{predicted_duration_yellow / 60:.2f} mins", is_shortest_yellow)
         
         col_yellow.metric(
             "Yellow Cab",
@@ -406,7 +406,7 @@ if st.session_state['run_prediction']:
         is_shortest_uber = "Uber" == shortest_service
 
         price_value_uber, price_delta_uber, price_color_uber = format_metric_price(f"${predicted_price_uber:.2f}", is_cheapest_uber)
-        duration_value_uber = format_metric_color(f"{predicted_duration_uber / 60:.2f} mins", is_shortest_uber)
+        duration_value_uber, duration_color_uber = format_metric_color(f"{predicted_duration_uber / 60:.2f} mins", is_shortest_uber)
         
         col_uber.metric(
             "Uber",
@@ -423,7 +423,7 @@ if st.session_state['run_prediction']:
         is_shortest_lyft = "Lyft" == shortest_service
 
         price_value_lyft, price_delta_uber, price_color_lyft = format_metric_price(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
-        duration_value_lyft = format_metric_color(f"{predicted_duration_lyft / 60:.2f} mins", is_shortest_lyft)
+        duration_value_lyft, duration_color_lyft = format_metric_color(f"{predicted_duration_lyft / 60:.2f} mins", is_shortest_lyft)
         
         col_lyft.metric(
             "Lyft",
