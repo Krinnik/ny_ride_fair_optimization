@@ -383,17 +383,15 @@ if st.session_state['run_prediction']:
 
         price_value_yellow, price_delta_yellow, price_color_yellow = format_metric_price(f"${predicted_price_yellow:.2f}", is_cheapest_yellow)
         duration_value_yellow = f"{predicted_duration_yellow / 60:.2f} mins"
-
-        duration_color_yellow_html = '<span style="color:green">' if is_shortest_yellow else '<span style="color:red">'
-        duration_display_yellow = f"{duration_color_yellow_html}{duration_value_yellow}</span> {'<span style=\"color:green\">⬆️</span>' if is_shortest_yellow else '⬇️'}"
-
+        arrow_yellow = '<span style="color:green">⬆️</span>' if is_shortest_yellow else '⬇️'
         col_yellow.metric(
             "Yellow Cab",
             price_value_yellow,
-            duration_display_yellow,
+            f"{arrow_yellow}",
             delta_color=price_color_yellow,
         )
-        
+        duration_color_yellow = "green" if is_shortest_yellow else "red"
+        st.markdown(f"<p style='color:{duration_color_yellow}; font-size:smaller;'>{duration_value_yellow}</p>", unsafe_allow_html=True)
 
     with col_uber:
         # Uber Prediction
@@ -402,34 +400,32 @@ if st.session_state['run_prediction']:
 
         price_value_uber, price_delta_uber, price_color_uber = format_metric_price(f"${predicted_price_uber:.2f}", is_cheapest_uber)
         duration_value_uber = f"{predicted_duration_uber / 60:.2f} mins"
-
-        duration_color_uber_html = '<span style="color:green">' if is_shortest_uber else '<span style="color:red">'
-        duration_display_uber = f"{duration_color_uber_html}{duration_value_uber}</span> {'<span style=\"color:green\">⬆️</span>' if is_shortest_uber else '⬇️'}"
-
+        arrow_uber = '<span style="color:green">⬆️</span>' if is_shortest_uber else '⬇️'
         col_uber.metric(
             "Uber",
             price_value_uber,
-            duration_display_uber,
+            f"{arrow_uber}",
             delta_color=price_color_uber,
         )
-        
+        duration_color_uber = "green" if is_shortest_uber else "red"
+        st.markdown(f"<p style='color:{duration_color_uber}; font-size:smaller;'>{duration_value_uber}</p>", unsafe_allow_html=True)
 
     with col_lyft:
         # Lyft Prediction
         is_cheapest_lyft = "Lyft" == cheapest_service
         is_shortest_lyft = "Lyft" == shortest_service
 
-        price_value_lyft, price_delta_lyft, price_color_lyft = format_metric_price(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
+        price_value_lyft, price_delta_uber, price_color_lyft = format_metric_price(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
         duration_value_lyft = f"{predicted_duration_lyft / 60:.2f} mins"
-
-        duration_color_lyft_html = '<span style="color:green">' if is_shortest_lyft else '<span style="color:red">'
-        duration_display_lyft = f"{duration_color_lyft_html}{duration_value_lyft}</span> {'<span style=\"color:green\">⬆️</span>' if is_shortest_lyft else '⬇️'}"
-
+        arrow_lyft = '<span style="color:green">⬆️</span>' if is_shortest_lyft else '⬇️'
         col_lyft.metric(
             "Lyft",
             price_value_lyft,
-            duration_display_lyft,
-            delta_color=price_color_lyft,)
+            f"{arrow_lyft}",
+            delta_color=price_color_lyft,
+        )
+        duration_color_lyft = "green" if is_shortest_lyft else "red"
+        st.markdown(f"<p style='color:{duration_color_lyft}; font-size:smaller;'>{duration_value_lyft}</p>", unsafe_allow_html=True)
         
 
 
