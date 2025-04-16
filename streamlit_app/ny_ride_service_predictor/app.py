@@ -375,32 +375,32 @@ if st.session_state['run_prediction']:
     price_cols = st.columns(3)
     with price_cols[0]:
         is_cheapest_yellow = "Yellow Cab" == cheapest_service
-        price_color_yellow = "green" if is_cheapest_yellow else "red"
-        st.metric("Yellow Cab", f"${predicted_price_yellow:.2f}", delta_color=price_color_yellow)
+        price_color_yellow = "normal" if is_cheapest_yellow else "inverse"
+        st.metric("Yellow Cab", f"${predicted_price_yellow:.2f}", delta_color="normal")
     with price_cols[1]:
         is_cheapest_uber = "Uber" == cheapest_service
-        price_color_uber = "green" if is_cheapest_uber else "red"
-        st.metric("Uber", f"${predicted_price_uber:.2f}", delta_color=price_color_uber)
+        price_color_uber = "normal" if is_cheapest_uber else "inverse"
+        st.metric("Uber", f"${predicted_price_uber:.2f}", delta_color="normal")
     with price_cols[2]:
         is_cheapest_lyft = "Lyft" == cheapest_service
-        price_color_lyft = "green" if is_cheapest_lyft else "red"
-        st.metric("Lyft", f"${predicted_price_lyft:.2f}", delta_color=price_color_lyft)
+        price_color_lyft = "normal" if is_cheapest_lyft else "inverse"
+        st.metric("Lyft", f"${predicted_price_lyft:.2f}", delta_color="normal")
 
     # Durations
     st.subheader("Duration Comparison")
     duration_cols = st.columns(3)
     with duration_cols[0]:
         is_shortest_yellow = "Yellow Cab" == shortest_service
-        duration_color_yellow = "green" if is_shortest_yellow else "red"
-        st.metric("Yellow Cab", f"{predicted_duration_yellow / 60:.2f} mins", delta_color=duration_color_yellow)
+        duration_color_yellow = "normal" if is_shortest_yellow else "inverse"
+        st.metric("Yellow Cab", f"{predicted_duration_yellow / 60:.2f} mins", delta_color="normal")
     with duration_cols[1]:
         is_shortest_uber = "Uber" == shortest_service
-        duration_color_uber = "green" if is_shortest_uber else "red"
-        st.metric("Uber", f"{predicted_duration_uber / 60:.2f} mins", delta_color=duration_color_uber)
+        duration_color_uber = "normal" if is_shortest_uber else "inverse"
+        st.metric("Uber", f"{predicted_duration_uber / 60:.2f} mins", delta_color="normal")
     with duration_cols[2]:
         is_shortest_lyft = "Lyft" == shortest_service
-        duration_color_lyft = "green" if is_shortest_lyft else "red"
-        st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins", delta_color=duration_color_lyft)
+        duration_color_lyft = "normal" if is_shortest_lyft else "inverse"
+        st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins", delta_color="normal")
         
         
         
