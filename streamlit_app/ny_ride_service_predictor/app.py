@@ -77,7 +77,7 @@ def get_weather_data(latitude, longitude):
     prcp = "N/A"
     api_url = f"https://api.weather.gov/points/{latitude},{longitude}"
     try:
-        response = requests.get(api_url, timeout=5)
+        response = requests.get(api_url, timeout=10)
         if response.status_code == 200:
             point_data = response.json()
             forecast_url = point_data['properties']['forecastHourly']
@@ -368,63 +368,70 @@ if st.session_state['run_prediction']:
     shortest_service = min(durations, key=durations.get)
 
     # Function to format metric with color and arrow
-    def format_metric(value, is_best):
+    def format_metric_price(value, is_best):
         if is_best:
-            delta = None 
-            delta_color = "normal"
+            delta_color = "normal"  
         else:
-            delta = None 
-            delta_color = "inverse"
+            delta_color = "inverse" 
+        return f"{value}", None, delta_color
 
-        return f"{value}", delta, delta_color
+    def format_metric_duration(value, is_best):
+        if is_best:
+            delta_color = "normal"  
+        else:
+            delta_color = None
+        return f"{value}", None, delta_color
 
     with col_yellow:
         # Yellow Cab Prediction
         is_cheapest_yellow = "Yellow Cab" == cheapest_service
         is_shortest_yellow = "Yellow Cab" == shortest_service
 
-        price_value_yellow, price_delta_yellow, price_color_yellow = format_metric(f"${predicted_price_yellow:.2f}", is_cheapest_yellow)
-        duration_value_yellow, duration_delta_yellow, duration_color_yellow = format_metric(f"{predicted_duration_yellow / 60:.2f} mins", is_shortest_yellow)
+        price_value_yellow, price_delta_yellow, price_color_yellow = format_metric_price(f"${predicted_price_yellow:.2f}", is_cheapest_yellow)
+        duration_value_yellow, duration_delta_yellow, duration_color_yellow = format_metric_duration(f"{predicted_duration_yellow / 60:.2f} mins", is_shortest_yellow)
 
         col_yellow.metric(
             "Yellow Cab",
             price_value_yellow,
             f"{duration_value_yellow} {'⬆️' if is_shortest_yellow else '⬇️'}",
-            delta_color=price_color_yellow if not is_cheapest_yellow else "normal",
+            delta_color=price_color_yellow,
+            delta_inverse=not is_shortest_yellow
         )
-        col_yellow.markdown(f"<p style='color:{'green' if is_cheapest_yellow else 'red'}; font-size:smaller;'>{'⬆️' if is_cheapest_yellow else '⬇️'} Price</p>", unsafe_allow_html=True)
+        
 
     with col_uber:
         # Uber Prediction
         is_cheapest_uber = "Uber" == cheapest_service
         is_shortest_uber = "Uber" == shortest_service
 
-        price_value_uber, price_delta_uber, price_color_uber = format_metric(f"${predicted_price_uber:.2f}", is_cheapest_uber)
-        duration_value_uber, duration_delta_uber, duration_color_uber = format_metric(f"{predicted_duration_uber / 60:.2f} mins", is_shortest_uber)
+        price_value_uber, price_delta_uber, price_color_uber = format_metric_price(f"${predicted_price_uber:.2f}", is_cheapest_uber)
+        duration_value_uber, duration_delta_uber, duration_color_uber = format_metric_duration(f"{predicted_duration_uber / 60:.2f} mins", is_shortest_uber)
 
         col_uber.metric(
             "Uber",
             price_value_uber,
             f"{duration_value_uber} {'⬆️' if is_shortest_uber else '⬇️'}",
-            delta_color=price_color_uber if not is_cheapest_uber else "normal",
+            delta_color=price_color_uber,
+            delta_inverse=not is_shortest_uber,
         )
-        col_uber.markdown(f"<p style='color:{'green' if is_cheapest_uber else 'red'}; font-size:smaller;'>{'⬆️' if is_cheapest_uber else '⬇️'} Price</p>", unsafe_allow_html=True)
+        
 
     with col_lyft:
         # Lyft Prediction
         is_cheapest_lyft = "Lyft" == cheapest_service
         is_shortest_lyft = "Lyft" == shortest_service
 
-        price_value_lyft, price_delta_lyft, price_color_lyft = format_metric(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
-        duration_value_lyft, duration_delta_lyft, duration_color_uber = format_metric(f"{predicted_duration_lyft / 60:.2f} mins", is_shortest_lyft)
+        price_value_lyft, price_delta_lyft, price_color_lyft = format_metric_price(f"${predicted_price_lyft:.2f}", is_cheapest_lyft)
+        duration_value_lyft, duration_delta_lyft, duration_color_uber = format_metric_duration(f"{predicted_duration_lyft / 60:.2f} mins", is_shortest_lyft)
 
         col_lyft.metric(
             "Lyft",
             price_value_lyft,
             f"{duration_value_lyft} {'⬆️' if is_shortest_lyft else '⬇️'}",
-            delta_color=price_color_lyft if not is_cheapest_lyft else "normal",
+            delta_color=price_color_lyft,
+            delta_inverse=not is_shortest_lyft
         )
-        col_lyft.markdown(f"<p style='color:{'green' if is_cheapest_lyft else 'red'}; font-size:smaller;'>{'⬆️' if is_cheapest_lyft else '⬇️'} Price</p>", unsafe_allow_html=True)
+        
 
 
 
