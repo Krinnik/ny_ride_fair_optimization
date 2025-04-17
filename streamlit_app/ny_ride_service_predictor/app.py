@@ -395,7 +395,7 @@ if st.session_state['run_prediction']:
     price_cols = st.columns(3)
     price_styles = ["", "", ""] 
     if cheapest_col_index != -1:
-        price_styles[cheapest_col_index] = "border: 2px solid lightgreen; padding: 10px; border-radius: 5px;"
+        price_styles[cheapest_col_index] = "border: 2px solid lightgreen; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with price_cols[0]:
         st.markdown(f"<div style='{price_styles[0]}'>", unsafe_allow_html=True)
@@ -415,7 +415,7 @@ if st.session_state['run_prediction']:
     duration_cols = st.columns(3)
     duration_styles = ["", "", ""]  
     if shortest_col_index != -1:
-        duration_styles[shortest_col_index] = "border: 2px solid lightgreen; padding: 10px; border-radius: 5px;"
+        duration_styles[shortest_col_index] = "border: 2px solid lightgreen; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with duration_cols[0]:
         st.markdown(f"<div style='{duration_styles[0]}'>", unsafe_allow_html=True)
