@@ -374,11 +374,11 @@ if st.session_state['run_prediction']:
     expensive_service = max(prices, key=prices.get)
     longest_service = max(durations, key=durations.get)
 
-    for service in prices.items():
+    for service in prices.keys():
         if service != cheapest_service and service != expensive_service:
             mid_price_service = service
     
-    for service in durations.items():
+    for service in durations.keys():
         if service != shortest_service and service != longest_service:
             mid_dur_service = service
     
@@ -477,7 +477,7 @@ if st.session_state['run_prediction']:
         duration_styles[longest_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
 
     if mid_dur_col_index != -1:
-        duration_styles[mid_dur_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
+        duration_styles[mid_dur_col_index] = "border: 2px solid yellow; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with duration_cols[0]:
         st.markdown(f"<div style='{duration_styles[0]}'>", unsafe_allow_html=True)
