@@ -366,13 +366,22 @@ if st.session_state['run_prediction']:
         "Uber": predicted_duration_uber / 60,
         "Lyft": predicted_duration_lyft / 60,
     }
-
+    
     # Determine the cheapest and shortest
     cheapest_service = min(prices, key=prices.get)
     shortest_service = min(durations, key=durations.get)
 
     expensive_service = max(prices, key=prices.get)
     longest_service = max(durations, key=durations.get)
+
+    for service in prices.items():
+        if service != cheapest_service and service != expensive_service:
+            mid_price_service = service
+    
+    for service in durations.items():
+        if service != shortest_service and service != longest_service:
+            mid_dur_service = service
+    
 
     # Determine the column indices for the cheapest and shortest services
     cheapest_col_index = -1
@@ -392,6 +401,23 @@ if st.session_state['run_prediction']:
     elif shortest_service == "Lyft":
         shortest_col_index = 2
 
+    mid_price_col_index = -1
+    mid_dur_col_index = -1
+
+    if mid_price_service == "Yellow Cab":
+        mid_price_col_index = 0
+    elif mid_price_service == "Uber":
+        mid_price_col_index = 1
+    elif mid_price_service == "Lyft":
+        mid_price_col_index = 2
+
+    if mid_dur_service == "Yellow Cab":
+        mid_dur_col_index = 0
+    elif mid_dur_service == "Uber":
+        mid_dur_col_index = 1
+    elif mid_dur_service == "Lyft":
+        mid_dur_col_index = 2
+
 
     expensive_col_index = -1
     longest_col_index = -1
@@ -410,8 +436,6 @@ if st.session_state['run_prediction']:
     elif longest_service == "Lyft":
         longest_col_index = 2
         
-    st.write(f"Cheapest Service: {cheapest_service}, Index: {cheapest_col_index}")
-    st.write(f"Expensive Service: {expensive_service}, Index: {expensive_col_index}") # Add this line
 
     # Prices
     st.write("**Price Comparison**")
@@ -422,6 +446,9 @@ if st.session_state['run_prediction']:
     
     if expensive_col_index != -1:
         price_styles[expensive_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
+
+    if mid_price_col_index != -1:
+        price_styles[mid_price_col_index] = "border: 2px solid yellow; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with price_cols[0]:
         st.markdown(f"<div style='{price_styles[0]}'>", unsafe_allow_html=True)
@@ -448,6 +475,9 @@ if st.session_state['run_prediction']:
     
     if longest_col_index != -1:
         duration_styles[longest_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
+
+    if mid_dur_col_index != -1:
+        duration_styles[mid_dur_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with duration_cols[0]:
         st.markdown(f"<div style='{duration_styles[0]}'>", unsafe_allow_html=True)
