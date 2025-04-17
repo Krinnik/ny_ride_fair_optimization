@@ -370,40 +370,66 @@ if st.session_state['run_prediction']:
     st.write(f"Cheapest Service: {cheapest_service}")
     st.write(f"Shortest Service: {shortest_service}")
 
+    st.subheader("Prediction Results")
+
+    # Determine the column indices for the cheapest and shortest services
+    cheapest_col_index = -1
+    shortest_col_index = -1
+
+    if cheapest_service == "Yellow Cab":
+        cheapest_col_index = 0
+    elif cheapest_service == "Uber":
+        cheapest_col_index = 1
+    elif cheapest_service == "Lyft":
+        cheapest_col_index = 2
+
+    if shortest_service == "Yellow Cab":
+        shortest_col_index = 0
+    elif shortest_service == "Uber":
+        shortest_col_index = 1
+    elif shortest_service == "Lyft":
+        shortest_col_index = 2
+
     # Prices
     st.subheader("Price Comparison")
     price_cols = st.columns(3)
+    price_styles = ["", "", ""] 
+    if cheapest_col_index != -1:
+        price_styles[cheapest_col_index] = "border: 2px solid lightgreen; padding: 10px; border-radius: 5px;"
+
     with price_cols[0]:
-        is_cheapest_yellow = "Yellow Cab" == cheapest_service
-        price_color_yellow = "normal" if is_cheapest_yellow else "inverse"
-        st.metric("Yellow Cab", f"${predicted_price_yellow:.2f}", delta_color="normal")
+        st.markdown(f"<div style='{price_styles[0]}'>", unsafe_allow_html=True)
+        st.metric("Yellow Cab", f"${predicted_price_yellow:.2f}")
+        st.markdown("</div>", unsafe_allow_html=True)
     with price_cols[1]:
-        is_cheapest_uber = "Uber" == cheapest_service
-        price_color_uber = "normal" if is_cheapest_uber else "inverse"
-        st.metric("Uber", f"${predicted_price_uber:.2f}", delta_color="normal")
+        st.markdown(f"<div style='{price_styles[1]}'>", unsafe_allow_html=True)
+        st.metric("Uber", f"${predicted_price_uber:.2f}")
+        st.markdown("</div>", unsafe_allow_html=True)
     with price_cols[2]:
-        is_cheapest_lyft = "Lyft" == cheapest_service
-        price_color_lyft = "normal" if is_cheapest_lyft else "inverse"
-        st.metric("Lyft", f"${predicted_price_lyft:.2f}", delta_color="normal")
+        st.markdown(f"<div style='{price_styles[2]}'>", unsafe_allow_html=True)
+        st.metric("Lyft", f"${predicted_price_lyft:.2f}")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Durations
     st.subheader("Duration Comparison")
     duration_cols = st.columns(3)
+    duration_styles = ["", "", ""]  
+    if shortest_col_index != -1:
+        duration_styles[shortest_col_index] = "border: 2px solid lightgreen; padding: 10px; border-radius: 5px;"
+
     with duration_cols[0]:
-        is_shortest_yellow = "Yellow Cab" == shortest_service
-        duration_color_yellow = "normal" if is_shortest_yellow else "inverse"
-        st.metric("Yellow Cab", f"{predicted_duration_yellow / 60:.2f} mins", delta_color="normal")
+        st.markdown(f"<div style='{duration_styles[0]}'>", unsafe_allow_html=True)
+        st.metric("Yellow Cab", f"{predicted_duration_yellow / 60:.2f} mins")
+        st.markdown("</div>", unsafe_allow_html=True)
     with duration_cols[1]:
-        is_shortest_uber = "Uber" == shortest_service
-        duration_color_uber = "normal" if is_shortest_uber else "inverse"
-        st.metric("Uber", f"{predicted_duration_uber / 60:.2f} mins", delta_color="normal")
+        st.markdown(f"<div style='{duration_styles[1]}'>", unsafe_allow_html=True)
+        st.metric("Uber", f"{predicted_duration_uber / 60:.2f} mins")
+        st.markdown("</div>", unsafe_allow_html=True)
     with duration_cols[2]:
-        is_shortest_lyft = "Lyft" == shortest_service
-        duration_color_lyft = "normal" if is_shortest_lyft else "inverse"
-        st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins", delta_color="normal")
-        
-        
-        
+        st.markdown(f"<div style='{duration_styles[2]}'>", unsafe_allow_html=True)
+        st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins")
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
