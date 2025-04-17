@@ -367,11 +367,6 @@ if st.session_state['run_prediction']:
     cheapest_service = min(prices, key=prices.get)
     shortest_service = min(durations, key=durations.get)
 
-    st.write(f"Cheapest Service: {cheapest_service}")
-    st.write(f"Shortest Service: {shortest_service}")
-
-    st.subheader("Prediction Results")
-
     # Determine the column indices for the cheapest and shortest services
     cheapest_col_index = -1
     shortest_col_index = -1
@@ -431,7 +426,8 @@ if st.session_state['run_prediction']:
         st.markdown("</div>", unsafe_allow_html=True)
 
 
-
+    st.write(f"**Cheapest Service:** {cheapest_service}")
+    st.write(f"**Shortest Service:** {shortest_service}")
 
 
     st.subheader("Trip Information")
