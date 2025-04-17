@@ -7,7 +7,7 @@ from geopy.distance import geodesic
 import requests
 import folium
 from streamlit_folium import st_folium
-
+#streamlit_app/ny_ride_service_predictor/
 
 try:
     with open('streamlit_app/ny_ride_service_predictor/xgbr_price.pkl', 'rb') as f:
@@ -73,8 +73,8 @@ def calc_distance(coord1, coord2):
     return geodesic(coord1, coord2).miles
 
 def get_weather_data(latitude, longitude):
-    temp = "N/A"
-    prcp = "N/A"
+    temp = 0
+    prcp = 0.0
     api_url = f"https://api.weather.gov/points/{latitude},{longitude}"
     try:
         response = requests.get(api_url, timeout=10)
@@ -100,11 +100,12 @@ def get_weather_data(latitude, longitude):
                         observation_data = station_observation_response.json()
                         prcp_mm = observation_data['properties'].get('precipLastHour', {}).get('value')
                         if prcp_mm is not None:
-                            prcp = prcp_mm
+                            prcp = [prcp_mm]
                         else:
-                            prcp_mm = 0.0
+                            prcp = [0.0]
     except requests.exceptions.RequestException as e:
         st.warning(f"Error fetching weather data: {e}")
+    
     return temp, prcp
 
 
@@ -280,8 +281,8 @@ if st.session_state['run_prediction']:
         'evening rush': [evening_rush],
         'PULocationID': [pickup_location_id],
         'DOLocationID': [dropoff_location_id],
-        'prcp': [prcp if prcp != "N/A" else 0],
-        'temp': [temp if temp != "N/A" else 0],
+        'prcp': [prcp[0]],
+        'temp': [temp],
         'distance': [distance],
         'airport': [0.0],
         'congestion': [congestion],
@@ -432,8 +433,8 @@ if st.session_state['run_prediction']:
     st.write(f"**Dropoff Zone:** {dropoff_zone} (ID: {dropoff_location_id})")
     st.write(f"**Distance:** {distance:.2f} miles")
     st.write(f"**Current Temperature:** {temp}°F")
-    st.write(f"**Precipitation (last hour):** {prcp} mm")
-    st.write(f"**Time of Request:** {now.strftime('%Y-%m-%d %H:%M:%S')}")
+    st.write(f"**Precipitation (last hour):** {prcp[0]} mm")
+    st.write(f"**Time of Request:** {now.strftime('%I:%M:%S %p %m/%d/%Y')}")
 
     st.session_state['pickup_option'] = sorted_pickup_options[0] if sorted_pickup_options else None
     st.session_state['dropoff_option'] = sorted_dropoff_options[0] if sorted_dropoff_options else None
