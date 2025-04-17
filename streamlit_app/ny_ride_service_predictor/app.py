@@ -181,11 +181,12 @@ st.markdown(
     button.st-emotion-cache-b0y9n5.em9zgd02 {
         margin-top: 27px 
     }
-    button.st-emotion-cache-ocsh0s em9zgd02 {
+    button.st-emotion-cache-ocsh0s.em9zgd02 {
         margin-top: 27px
     </style>
     """,
     unsafe_allow_html=True,)
+
 
 
 # Create the Folium map 
@@ -370,6 +371,9 @@ if st.session_state['run_prediction']:
     cheapest_service = min(prices, key=prices.get)
     shortest_service = min(durations, key=durations.get)
 
+    expensive_service = max(prices, key=prices.get)
+    longest_service = max(durations, key=durations.get)
+
     # Determine the column indices for the cheapest and shortest services
     cheapest_col_index = -1
     shortest_col_index = -1
@@ -388,25 +392,52 @@ if st.session_state['run_prediction']:
     elif shortest_service == "Lyft":
         shortest_col_index = 2
 
+
+    expensive_col_index = -1
+    longest_col_index = -1
+
+    if expensive_service == "Yellow Cab":
+        expensive_col_index = 0
+    elif expensive_service == "Uber":
+        expensive_col_index = 1
+    elif expensive_service == "Lyft":
+        expensive_col_index = 2
+
+    if longest_service == "Yellow Cab":
+        longest_col_index = 0
+    elif longest_service == "Uber":
+        longest_col_index = 1
+    elif longest_service == "Lyft":
+        longest_col_index = 2
+        
+    st.write(f"Cheapest Service: {cheapest_service}, Index: {cheapest_col_index}")
+    st.write(f"Expensive Service: {expensive_service}, Index: {expensive_col_index}") # Add this line
+
     # Prices
     st.write("**Price Comparison**")
     price_cols = st.columns(3)
     price_styles = ["", "", ""] 
     if cheapest_col_index != -1:
         price_styles[cheapest_col_index] = "border: 2px solid lightgreen; !important; padding: 15px !important; border-radius: 5px !important;"
+    
+    if expensive_col_index != -1:
+        price_styles[expensive_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with price_cols[0]:
         st.markdown(f"<div style='{price_styles[0]}'>", unsafe_allow_html=True)
         st.metric("Yellow Cab", f"${predicted_price_yellow:.2f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='{price_styles[0]}'>", unsafe_allow_html=True)
+        st.markdown(f"</div>", unsafe_allow_html=True)
     with price_cols[1]:
         st.markdown(f"<div style='{price_styles[1]}'>", unsafe_allow_html=True)
         st.metric("Uber", f"${predicted_price_uber:.2f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='{price_styles[1]}'>", unsafe_allow_html=True)
+        st.markdown(f"</div>", unsafe_allow_html=True)
     with price_cols[2]:
         st.markdown(f"<div style='{price_styles[2]}'>", unsafe_allow_html=True)
         st.metric("Lyft", f"${predicted_price_lyft:.2f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='{price_styles[2]}'>", unsafe_allow_html=True)
+        st.markdown(f"</div>", unsafe_allow_html=True) 
 
     # Durations
     st.write("**Duration Comparison**")
@@ -414,19 +445,25 @@ if st.session_state['run_prediction']:
     duration_styles = ["", "", ""]  
     if shortest_col_index != -1:
         duration_styles[shortest_col_index] = "border: 2px solid lightgreen; !important; padding: 15px !important; border-radius: 5px !important;"
+    
+    if longest_col_index != -1:
+        duration_styles[longest_col_index] = "border: 2px solid red; !important; padding: 15px !important; border-radius: 5px !important;"
 
     with duration_cols[0]:
         st.markdown(f"<div style='{duration_styles[0]}'>", unsafe_allow_html=True)
         st.metric("Yellow Cab", f"{predicted_duration_yellow / 60:.2f} mins")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='{duration_styles[0]}'>", unsafe_allow_html=True)
+        st.markdown(f"</div>", unsafe_allow_html=True)
     with duration_cols[1]:
         st.markdown(f"<div style='{duration_styles[1]}'>", unsafe_allow_html=True)
         st.metric("Uber", f"{predicted_duration_uber / 60:.2f} mins")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='{duration_styles[1]}'>", unsafe_allow_html=True)
+        st.markdown(f"</div>", unsafe_allow_html=True)
     with duration_cols[2]:
         st.markdown(f"<div style='{duration_styles[2]}'>", unsafe_allow_html=True)
         st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='{duration_styles[2]}'>", unsafe_allow_html=True)
+        st.markdown(f"</div>", unsafe_allow_html=True)
 
     st.subheader("Trip Information")
     st.write(f"**Cheapest Service:** {cheapest_service}")
