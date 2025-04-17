@@ -386,7 +386,7 @@ if st.session_state['run_prediction']:
         shortest_col_index = 2
 
     # Prices
-    st.subheader("Price Comparison")
+    st.write("**Price Comparison**")
     price_cols = st.columns(3)
     price_styles = ["", "", ""] 
     if cheapest_col_index != -1:
@@ -406,7 +406,7 @@ if st.session_state['run_prediction']:
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Durations
-    st.subheader("Duration Comparison")
+    st.write("**Duration Comparison**")
     duration_cols = st.columns(3)
     duration_styles = ["", "", ""]  
     if shortest_col_index != -1:
@@ -425,12 +425,9 @@ if st.session_state['run_prediction']:
         st.metric("Lyft", f"{predicted_duration_lyft / 60:.2f} mins")
         st.markdown("</div>", unsafe_allow_html=True)
 
-
+    st.subheader("Trip Information")
     st.write(f"**Cheapest Service:** {cheapest_service}")
     st.write(f"**Shortest Service:** {shortest_service}")
-
-
-    st.subheader("Trip Information")
     st.write(f"**Pickup Zone:** {pickup_zone} (ID: {pickup_location_id})")
     st.write(f"**Dropoff Zone:** {dropoff_zone} (ID: {dropoff_location_id})")
     st.write(f"**Distance:** {distance:.2f} miles")
