@@ -181,6 +181,8 @@ st.markdown(
     button.st-emotion-cache-b0y9n5.em9zgd02 {
         margin-top: 27px 
     }
+    button.st-emotion-cache-ocsh0s em9zgd02 {
+        margin-top: 27px
     </style>
     """,
     unsafe_allow_html=True,)
