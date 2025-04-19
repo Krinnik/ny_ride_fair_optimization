@@ -1,4 +1,6 @@
 import streamlit as st
+import openai
+from openai import OpenAI
 import pandas as pd
 import pickle
 from datetime import datetime
@@ -7,6 +9,14 @@ from geopy.distance import geodesic
 import requests
 import folium
 from streamlit_folium import st_folium
+import os  
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+import speech_recognition as sr
+from langchain.schema import Document
+from pydub import AudioSegment
+import tempfile
+import io
 #streamlit_app/ny_ride_service_predictor/
 
 try:
@@ -68,6 +78,48 @@ duration_features = [
             'PULocationID_duration_encoded',
             'DOLocationID_duration_encoded']
 
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+
+client = OpenAI(api_key=openai_api_key)
+
+def speech_to_text(audio_file_path):
+    r = sr.Recognizer()
+    try:
+        with sr.AudioFile(audio_file_path) as source:
+            audio_data = r.record(source)
+        text = r.recognize_google(audio_data)
+        return Document(page_content=text)
+    except sr.UnknownValueError:
+        return "Speech Recognition could not understand audio"
+    except sr.RequestError as e:
+        return f"Could not request results from Speech Recognition service; {e}"
+    except FileNotFoundError:
+        return None  # Handle case where no audio was recorded
+    except Exception as e:
+        return f"An error occurred during speech recognition: {e}"
+
+
+def get_bot_response(user_query):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo", 
+            messages=[
+                {"role": "system", "content": """You are a helpful assistant that can understand user inputs. Your primary goal is to identify pickup and dropoff location names a user provides."""},
+                {"role": "user", "content": user_query},
+            ],
+        )
+        return response.choices[0].message.content
+    except openai.OpenAIError as e:
+        return f"An error occurred with OpenAI: {e}"
+
+
+def find_location_match(user_text, location_options, threshold=60):
+    best_match, score = process.extractOne(user_text, location_options)
+    if score >= threshold:
+        return best_match
+    else:
+        return None
+
 
 def calc_distance(coord1, coord2):
     return geodesic(coord1, coord2).miles
@@ -111,10 +163,30 @@ def get_weather_data(latitude, longitude):
 
 st.title("NY Ride Service Price and Duration Prediction")
 
+# Voice input widget
+spoken_audio_bytes = st.audio_input(
+    "Speak your request:",
+    key="speech_input"
+)
+
+stt_input = None
+if spoken_audio_bytes:
+    stt_input = speech_to_text(spoken_audio_bytes)
+    stt_input = stt_input.page_content
+    
+else:
+    pass
+
+user_input = st.text_input("Or type your request:", stt_input if stt_input else "", key="text_input_chatbot").strip('page_content')
+chat_placeholder = st.empty()
+
+
 
 # Create Mappings
+location_options_df = coords_df[['Zone', 'LocationID']].copy()
 location_options = [f"{row['Zone']} ({row['LocationID']})" for index, row in coords_df.iterrows()]
 sorted_location_options = sorted(location_options)
+sorted_location_options_df = location_options_df.sort_values(by='Zone').reset_index(drop=True)
 zone_id_map = {option: int(option.split('(')[-1][:-1]) for option in sorted_location_options}
 location_to_zone = {v: k for k, v in zone_id_map.items()}
 
@@ -123,6 +195,11 @@ pickup_options_list = [f"{row['Zone']} ({row['LocationID']})" for index, row in 
 sorted_pickup_options = sorted(pickup_options_list)
 dropoff_options_list = [f"{row['Zone']} ({row['LocationID']})" for index, row in coords_df.iterrows()]
 sorted_dropoff_options = sorted(dropoff_options_list)
+
+pickup_options_list2 = [f"{row['Zone']}" for index, row in coords_df.iterrows()]
+sorted_pickup_options2 = sorted(pickup_options_list2)
+dropoff_options_list2 = [f"{row['Zone']}" for index, row in coords_df.iterrows()]
+sorted_dropoff_options2 = sorted(dropoff_options_list2)
 
 # Initialize session state
 if 'pickup_option' not in st.session_state:
@@ -236,7 +313,61 @@ if map_data and map_data.get("last_object_clicked"):
                 st.session_state['dropoff_option'] = nearest
                 st.sidebar.info(f"Dropoff set from map: {st.session_state['dropoff_option']}")
           
-                
+if user_input:
+    pickup_match = None
+    dropoff_match = None
+
+    try:
+        # Get the bot's response to interpret the user input
+        bot_response = get_bot_response(user_input)
+        #st.info(f"Bot: {bot_response}")
+
+        # Try to extract pickup and dropoff from the bot's response
+        pickup_zone_phrase = None
+        dropoff_zone_phrase = None
+
+        if "pickup" in bot_response.lower() and "dropoff" in bot_response.lower():
+            try:
+                parts = bot_response.lower().split("pickup")
+                if len(parts) > 1:
+                    pickup_part = parts[1]
+                    dropoff_parts = pickup_part.split("dropoff")
+                    if len(dropoff_parts) > 1:
+                        pickup_zone_phrase = dropoff_parts[0].strip().replace(":", "").strip()
+                        dropoff_zone_phrase = dropoff_parts[1].strip().replace(":", "").strip()
+            except Exception as e:
+                st.warning(f"Error parsing bot response: {e}")
+
+        if pickup_zone_phrase and dropoff_zone_phrase:
+            pickup_match = find_location_match(pickup_zone_phrase, sorted_pickup_options2)
+            dropoff_match = find_location_match(dropoff_zone_phrase, sorted_dropoff_options2)
+
+            if pickup_match and dropoff_match:
+                st.info(f"MaxiMile identified pickup: {pickup_match}, dropoff: {dropoff_match}")
+
+                # Get Location IDs and update session state (same as before)
+                pickup_location_df = sorted_location_options_df[sorted_location_options_df['Zone'] == pickup_match]
+                dropoff_location_df = sorted_location_options_df[sorted_location_options_df['Zone'] == dropoff_match]
+
+                if not pickup_location_df.empty and not dropoff_location_df.empty:
+                    pickup_location_id = pickup_location_df['LocationID'].iloc[0]
+                    dropoff_location_id = dropoff_location_df['LocationID'].iloc[0]
+
+                    st.session_state['pickup_option'] = f"{pickup_match} ({pickup_location_id})"
+                    st.session_state['dropoff_option'] = f"{dropoff_match} ({dropoff_location_id})"
+
+                    st.success("Pickup and Dropoff locations updated. Click 'Run Prediction'!")
+                    
+                else:
+                    st.warning("Could not find the identified zones in the location data.")
+            #else:
+                #st.warning("Chatbot identified pickup or dropoff, but could not find a close match in the location list.")
+        #else:
+            #st.info("Please specify pickup and dropoff locations in your request.")
+
+    except Exception as e:
+        st.error(f"Error processing input: {e}")
+
 
 
 # prediction calculations
