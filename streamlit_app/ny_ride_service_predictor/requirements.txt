@@ -12,4 +12,10 @@ xgboost
 numpy
 pytz
 requests
-category_encoders      
+category_encoders
+openai
+fuzzywuzzy
+python-Levenshtein
+SpeechRecognition
+langchain-core
+pydub      
