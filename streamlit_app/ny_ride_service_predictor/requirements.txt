@@ -17,5 +17,5 @@ openai
 fuzzywuzzy
 python-Levenshtein
 SpeechRecognition
-langchain-core
+langchain
 pydub      
