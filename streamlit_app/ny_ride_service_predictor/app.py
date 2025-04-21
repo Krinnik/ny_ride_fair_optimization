@@ -663,6 +663,9 @@ if st.session_state['run_prediction']:
     st.write(f"**Precipitation (last hour):** {prcp[0]} mm")
     st.write(f"**Time of Request:** {now.strftime('%I:%M:%S %p %m/%d/%Y')}")
 
+    stt_input = None
+    user_input = st.text_input("Or type your request:", stt_input if stt_input else "", key="text_input_chatbot").strip('page_content')
+
     st.session_state['pickup_option'] = sorted_pickup_options[0] if sorted_pickup_options else None
     st.session_state['dropoff_option'] = sorted_dropoff_options[0] if sorted_dropoff_options else None
     st.session_state['run_prediction'] = False
