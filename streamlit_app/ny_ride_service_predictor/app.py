@@ -169,9 +169,9 @@ st.markdown(
     <style>
     .stHorizontalBlock.st-emotion-cache-ocqkz7.eu6p4el0 {
         
-        height: 500px !important;
-        /* margin-top: 20px !important;
-        /* gap: 30px !important;
+        height: 100px !important;
+        margin-top: 20px !important;
+        gap: 30px !important;
     }
     </style>
     """,
