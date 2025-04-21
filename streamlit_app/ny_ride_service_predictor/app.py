@@ -170,8 +170,7 @@ st.markdown(
     .stHorizontalBlock.st-emotion-cache-ocqkz7.eu6p4el0 {
         
         height: 100px !important;
-        margin-top: 20px !important;
-        gap: 30px !important;
+        
     }
     </style>
     """,
@@ -319,6 +318,31 @@ if map_data and map_data.get("last_object_clicked"):
                 st.sidebar.info(f"Dropoff set from map: {st.session_state['dropoff_option']}")  
 
        
+
+
+# location and run buttons
+cols = st.columns([3, 3, 2]) 
+
+with cols[0]:
+    default_pickup = st.session_state.get('pickup_option', sorted_pickup_options[0] if sorted_pickup_options else None)
+    pickup_index = sorted_pickup_options.index(default_pickup) if default_pickup in sorted_pickup_options else 0
+    st.session_state['pickup_option'] = st.selectbox("Pickup Location", sorted_pickup_options, index=pickup_index, key='pickup_selectbox_main')
+    pickup_info_placeholder = st.empty() 
+
+with cols[1]:
+    default_dropoff = st.session_state.get('dropoff_option', sorted_dropoff_options[0] if sorted_dropoff_options else None)
+    dropoff_index = sorted_dropoff_options.index(default_dropoff) if default_dropoff in sorted_dropoff_options else 0
+    st.session_state['dropoff_option'] = st.selectbox("Dropoff Location", sorted_dropoff_options, index=dropoff_index, key='dropoff_selectbox_main')
+    dropoff_info_placeholder = st.empty()
+
+with cols[2]:
+    if st.button("Run Prediction", key='run_button_below_map'):
+        st.session_state['run_prediction'] = True
+    else:
+        st.session_state['run_prediction'] = False
+
+
+
 if user_input:
     pickup_match = None
     dropoff_match = None
@@ -373,28 +397,6 @@ if user_input:
 
     except Exception as e:
         st.error(f"Error processing input: {e}")
-
-# location and run buttons
-cols = st.columns([3, 3, 2]) 
-
-with cols[0]:
-    default_pickup = st.session_state.get('pickup_option', sorted_pickup_options[0] if sorted_pickup_options else None)
-    pickup_index = sorted_pickup_options.index(default_pickup) if default_pickup in sorted_pickup_options else 0
-    st.session_state['pickup_option'] = st.selectbox("Pickup Location", sorted_pickup_options, index=pickup_index, key='pickup_selectbox_main')
-    pickup_info_placeholder = st.empty() 
-
-with cols[1]:
-    default_dropoff = st.session_state.get('dropoff_option', sorted_dropoff_options[0] if sorted_dropoff_options else None)
-    dropoff_index = sorted_dropoff_options.index(default_dropoff) if default_dropoff in sorted_dropoff_options else 0
-    st.session_state['dropoff_option'] = st.selectbox("Dropoff Location", sorted_dropoff_options, index=dropoff_index, key='dropoff_selectbox_main')
-    dropoff_info_placeholder = st.empty()
-
-with cols[2]:
-    if st.button("Run Prediction", key='run_button_below_map'):
-        st.session_state['run_prediction'] = True
-    else:
-        st.session_state['run_prediction'] = False
-
 # prediction calculations
 if st.session_state['run_prediction']:
     
