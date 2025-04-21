@@ -169,7 +169,7 @@ st.markdown(
     <style>
     .stHorizontalBlock.st-emotion-cache-ocqkz7.eu6p4el0 {
         
-        height: 100px !important;
+        height: 25px !important;
     }
     </style>
     """,
