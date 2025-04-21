@@ -235,7 +235,15 @@ def find_nearest_location(click_lat, click_lng, locations_df):
             nearest_location = f"{row['Zone']} ({row['LocationID']})"
     return nearest_location
 
-
+st.markdown(
+    """
+    <style>
+    .st-emotion-cache-8atqhb.e1mlolmg0 {
+        height: 500px !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,)
 
 # Create the Folium map 
 nyc_coords = [40.7128, -74.0060]
