@@ -164,7 +164,17 @@ def get_weather_data(latitude, longitude):
 st.title("NY Ride Service Price and Duration Prediction")
 
 
-
+st.markdown(
+    """
+    <style>
+    stHorizontalBlock.st-emotion-cache-ocqkz7.eu6p4el0 {
+        
+        height: 100px !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 # Create Mappings
