@@ -17,22 +17,24 @@ from langchain.schema import Document
 from pydub import AudioSegment
 import tempfile
 import io
+import pytz
+
 #streamlit_app/ny_ride_service_predictor/
 
 try:
-    with open('streamlit_app/ny_ride_service_predictor/xgbr_price.pkl', 'rb') as f:
+    with open('xgbr_price.pkl', 'rb') as f:
         xgbr = pickle.load(f)
-    with open('streamlit_app/ny_ride_service_predictor/xgbr_duration.pkl', 'rb') as f:
+    with open('xgbr_duration.pkl', 'rb') as f:
         xgbr2 = pickle.load(f)
-    with open('streamlit_app/ny_ride_service_predictor/encoder_pu_price.pkl', 'rb') as f:
+    with open('encoder_pu_price.pkl', 'rb') as f:
         encoder_pu_price = pickle.load(f)
-    with open('streamlit_app/ny_ride_service_predictor/encoder_do_price.pkl', 'rb') as f:
+    with open('encoder_do_price.pkl', 'rb') as f:
         encoder_do_price = pickle.load(f)
-    with open('streamlit_app/ny_ride_service_predictor/encoder_pu_duration.pkl', 'rb') as f:
+    with open('encoder_pu_duration.pkl', 'rb') as f:
         encoder_pu_duration = pickle.load(f)
-    with open('streamlit_app/ny_ride_service_predictor/encoder_do_duration.pkl', 'rb') as f:
+    with open('encoder_do_duration.pkl', 'rb') as f:
         encoder_do_duration = pickle.load(f)
-    with open('streamlit_app/ny_ride_service_predictor/coords_df.pkl', 'rb') as f:
+    with open('coords_df.pkl', 'rb') as f:
         coords_df = pickle.load(f)
 except FileNotFoundError:
     st.error("One or more necessary data files were not found. Please check the file paths.")
@@ -177,6 +179,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+ny_timezone = pytz.timezone("America/New_York")
+now_ny = datetime.now(ny_timezone)
+
 
 # Create Mappings
 location_options_df = coords_df[['Zone', 'LocationID']].copy()
@@ -218,8 +223,8 @@ default_dropoff = st.session_state.get('dropoff_option', sorted_dropoff_options[
 dropoff_index = sorted_dropoff_options.index(default_dropoff) if default_dropoff in sorted_dropoff_options else 0
 st.session_state['dropoff_option'] = st.sidebar.selectbox("Dropoff Location", sorted_dropoff_options, index=dropoff_index, key='dropoff_selectbox')
 
-current_time = st.sidebar.time_input("Current Time", datetime.now().time(), key="current_time_input")
-current_date = st.sidebar.date_input("Current Date", datetime.now().date(), key="current_date_input")
+current_time = st.sidebar.time_input("Current Time", now_ny.time(), key="current_time_input")
+current_date = st.sidebar.date_input("Current Date", now_ny.date(), key="current_date_input")
 
 #if st.sidebar.button("Run Prediction"):
     #st.session_state['run_prediction'] = True
@@ -410,7 +415,7 @@ if st.session_state['run_prediction']:
         st.stop()
 
 
-    now = datetime.combine(current_date, current_time)
+    now = datetime.combine(current_date, current_time, tzinfo=pytz.timezone("America/New_York"))
     second_of_day = (now.hour * 3600) + (now.minute * 60) + now.second
     day_of_year = now.timetuple().tm_yday
     weekend = 1 if now.weekday() >= 5 else 0
