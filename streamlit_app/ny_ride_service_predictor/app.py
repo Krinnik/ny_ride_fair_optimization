@@ -22,19 +22,19 @@ import pytz
 #streamlit_app/ny_ride_service_predictor/
 
 try:
-    with open('xgbr_price.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/xgbr_price.pkl', 'rb') as f:
         xgbr = pickle.load(f)
-    with open('xgbr_duration.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/xgbr_duration.pkl', 'rb') as f:
         xgbr2 = pickle.load(f)
-    with open('encoder_pu_price.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/encoder_pu_price.pkl', 'rb') as f:
         encoder_pu_price = pickle.load(f)
-    with open('encoder_do_price.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/encoder_do_price.pkl', 'rb') as f:
         encoder_do_price = pickle.load(f)
-    with open('encoder_pu_duration.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/encoder_pu_duration.pkl', 'rb') as f:
         encoder_pu_duration = pickle.load(f)
-    with open('encoder_do_duration.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/encoder_do_duration.pkl', 'rb') as f:
         encoder_do_duration = pickle.load(f)
-    with open('coords_df.pkl', 'rb') as f:
+    with open('streamlit_app/ny_ride_service_predictor/coords_df.pkl', 'rb') as f:
         coords_df = pickle.load(f)
 except FileNotFoundError:
     st.error("One or more necessary data files were not found. Please check the file paths.")
