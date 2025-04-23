@@ -113,7 +113,7 @@ def get_bot_response(user_query):
         return f"An error occurred with OpenAI: {e}"
 
 
-def find_location_match(user_text, location_options, threshold=60):
+def find_location_match(user_text, location_options, threshold=80):
     best_match, score = process.extractOne(user_text, location_options)
     if score >= threshold:
         return best_match
@@ -363,8 +363,8 @@ if user_input:
                     pickup_part = parts[1]
                     dropoff_parts = pickup_part.split("dropoff")
                     if len(dropoff_parts) > 1:
-                        pickup_zone_phrase = dropoff_parts[0].strip().replace(":", "").strip()
-                        dropoff_zone_phrase = dropoff_parts[1].strip().replace(":", "").strip()
+                        pickup_zone_phrase = dropoff_parts[0].strip().replace(":", "").strip().capitalize()
+                        dropoff_zone_phrase = dropoff_parts[1].strip().replace(":", "").strip().capitalize()
             except Exception as e:
                 st.warning(f"Error parsing bot response: {e}")
 
